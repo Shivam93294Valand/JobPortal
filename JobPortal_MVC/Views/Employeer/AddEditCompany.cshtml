@@ -1,0 +1,271 @@
+﻿@model JobPortalMVC.Models.CompanyModel
+
+@{
+    ViewData["Title"] = "Add New Company";
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+}
+
+<!-- Dependency for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+<style>
+    /* Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --add-company-bg: #f4f7f6;
+        --add-company-card-bg: #ffffff;
+        --add-company-text: #2c3e50;
+        --add-company-text-secondary: #34495e;
+        --add-company-border: #ecf0f1;
+        --add-company-input-border: #dadfe1;
+        --add-company-input-bg: #ffffff;
+        --add-company-input-focus: #3498db;
+        --add-company-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        --add-company-btn-secondary-bg: #f1f2f6;
+        --add-company-btn-secondary-text: #34495e;
+        --add-company-btn-secondary-border: #dadfe1;
+        --add-company-btn-primary-bg: #3498db;
+        --add-company-icon-color: #6c757d;
+        --add-company-help-text: #6c757d;
+    }
+
+    [data-bs-theme="dark"] {
+        --add-company-bg: #0f1521;
+        --add-company-card-bg: #1a2234;
+        --add-company-text: #e5e9f0;
+        --add-company-text-secondary: #d1d5db;
+        --add-company-border: #2a3245;
+        --add-company-input-border: #374151;
+        --add-company-input-bg: #1f2937;
+        --add-company-input-focus: #6078ff;
+        --add-company-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        --add-company-btn-secondary-bg: #374151;
+        --add-company-btn-secondary-text: #d1d5db;
+        --add-company-btn-secondary-border: #4b5563;
+        --add-company-btn-primary-bg: #6078ff;
+        --add-company-icon-color: #9ca3af;
+        --add-company-help-text: #9ca3af;
+    }
+
+    .add-company-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--add-company-bg);
+        padding: 20px 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+        .page-header h1 {
+            color: var(--add-company-text);
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+
+    .form-card {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: var(--add-company-card-bg);
+        border-radius: 8px;
+        box-shadow: var(--add-company-shadow);
+        border-left: 5px solid var(--add-company-btn-primary-bg);
+        padding: 30px 40px;
+        transition: all 0.3s ease;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--add-company-text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    .form-control {
+        background-color: var(--add-company-input-bg);
+        border: 1px solid var(--add-company-input-border);
+        color: var(--add-company-text);
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            background-color: var(--add-company-input-bg);
+            border-color: var(--add-company-input-focus);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            color: var(--add-company-text);
+        }
+
+        .form-control::placeholder {
+            color: var(--add-company-help-text);
+        }
+
+    .input-icon-group {
+        position: relative;
+    }
+
+        .input-icon-group .form-control {
+            padding-left: 2.5rem;
+        }
+
+        .input-icon-group .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 0.9rem;
+            transform: translateY(-50%);
+            color: var(--add-company-icon-color);
+            transition: color 0.3s ease;
+        }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: var(--add-company-help-text);
+        transition: color 0.3s ease;
+    }
+
+    .form-actions {
+        border-top: 1px solid var(--add-company-border);
+        padding-top: 25px;
+        margin-top: 15px;
+        transition: border-color 0.3s ease;
+    }
+
+    .btn-secondary {
+        background-color: var(--add-company-btn-secondary-bg);
+        color: var(--add-company-btn-secondary-text);
+        border-color: var(--add-company-btn-secondary-border);
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: var(--add-company-btn-secondary-border);
+            color: var(--add-company-btn-secondary-text);
+        }
+
+    .btn-primary {
+        background-color: var(--add-company-btn-primary-bg);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--add-company-input-focus);
+            color: white;
+        }
+
+    .alert-danger {
+        background-color: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+    }
+
+    [data-bs-theme="dark"] .alert-danger {
+        background-color: #431f20;
+        border-color: #7f1d1d;
+        color: #ef4444;
+    }
+
+    .text-danger {
+        color: #dc2626 !important;
+    }
+
+    [data-bs-theme="dark"] .text-danger {
+        color: #ef4444 !important;
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+</style>
+
+<div class="add-company-page">
+    <div class="page-header">
+        <!-- Make the H1 dynamic using ViewData -->
+        <h1>@ViewData["Title"]</h1>
+        <a asp-controller="Employeer" asp-action="CompaniesList" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Companies
+        </a>
+    </div>
+
+    <!-- Correct the form action to post to the AddEditCompany method -->
+    <form method="post" asp-action="AddEditCompany" class="form-card">
+        @Html.AntiForgeryToken()
+
+        <!-- Add a hidden field for the CompanyId. This is essential for the edit functionality. -->
+        <input type="hidden" asp-for="CompanyId" />
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 text-center" role="alert"></div>
+
+        <div class="row">
+            <!-- Company Name Field -->
+            <div class="col-md-6 mb-4">
+                <label asp-for="Name" class="form-label">Company Name</label>
+                <div class="input-icon-group">
+                    <i class="fa-solid fa-building input-icon"></i>
+                    <input asp-for="Name" class="form-control" placeholder="Enter the company's official name" />
+                </div>
+                <span asp-validation-for="Name" class="text-danger small mt-1"></span>
+            </div>
+
+            <!-- Website Field -->
+            <div class="col-md-6 mb-4">
+                <label asp-for="Website" class="form-label"></label>
+                <div class="input-icon-group">
+                    <i class="fa-solid fa-globe input-icon"></i>
+                    <input asp-for="Website" class="form-control" placeholder="https://www.company.com" />
+                </div>
+                <span asp-validation-for="Website" class="text-danger small mt-1"></span>
+            </div>
+
+            <!-- Logo URL Field -->
+            <div class="col-12 mb-4">
+                <label asp-for="LogoUrl" class="form-label">Company Logo URL</label>
+                <div class="input-icon-group">
+                    <i class="fa-solid fa-image input-icon"></i>
+                    <input asp-for="LogoUrl" class="form-control" placeholder="https://example.com/logo.png" />
+                </div>
+                <span asp-validation-for="LogoUrl" class="text-danger small mt-1"></span>
+                <div class="form-text mt-2">
+                    Provide a direct link to a public image file (e.g., .png, .jpg, .svg).
+                </div>
+            </div>
+
+            <!-- Description Field -->
+            <div class="col-12 mb-4">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="5" placeholder="Provide a brief description of the company..."></textarea>
+                <span asp-validation-for="Description" class="text-danger small mt-1"></span>
+                <div class="form-text mt-2">
+                    A good description includes the company's mission, values, and key products or services.
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions d-flex justify-content-end gap-2">
+            <a asp-controller="Employeer" asp-action="CompaniesList" class="btn btn-secondary">Cancel</a>
+
+            <!-- Make the submit button dynamic -->
+            @if (Model.CompanyId == 0)
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Create Company</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i>Save Changes</button>
+            }
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

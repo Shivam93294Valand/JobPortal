@@ -1,0 +1,208 @@
+﻿@{
+    ViewData["Title"] = "Company Reviews";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<style>
+    /* Styles are theme-aware, using CSS variables from the layout */
+    .company-header-card {
+        background-color: var(--theme-bg-surface-1);
+        border: 1px solid var(--theme-border-color);
+        border-radius: 8px;
+        padding: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .company-info {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+        .company-info img {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            border: 1px solid var(--theme-border-color);
+        }
+
+        .company-info h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--theme-text-primary);
+            margin: 0;
+        }
+
+    .overall-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.25rem;
+        font-weight: 500;
+        color: var(--theme-text-secondary);
+    }
+
+    .star-rating {
+        font-size: 1.1rem;
+        color: #f1c40f;
+    }
+
+    .review-list-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .review-card {
+        background-color: var(--theme-bg-surface-1);
+        border: 1px solid var(--theme-border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .review-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid var(--theme-border-color);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .reviewer-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+        .reviewer-info img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+        }
+
+        .reviewer-info strong {
+            display: block;
+            color: var(--theme-text-primary);
+            font-weight: 600;
+        }
+
+        .reviewer-info span {
+            font-size: 0.9rem;
+            color: var(--theme-text-secondary);
+        }
+
+    .review-card-body p {
+        color: var(--theme-text-primary);
+        line-height: 1.7;
+    }
+
+    .btn-primary {
+        background-color: var(--theme-text-brand);
+        color: var(--theme-bg-surface-1);
+        border: none;
+    }
+</style>
+
+<!-- Main Company Header Card -->
+<div class="company-header-card">
+    <div class="company-info">
+        <img src="https://placehold.co/100x100/3b82f6/ffffff?text=TI" alt="Company Logo" />
+        <div>
+            <h1>Reviews for Tech Innovators LLC</h1>
+            <div class="overall-rating">
+                <div class="star-rating">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span>4.1 out of 5 stars</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- "Write a Review" button is now here -->
+    <a asp-action="AddCompanyReview" asp-controller="JobSeeker" class="btn btn-primary">
+        <i class="fa-solid fa-pen-to-square me-2"></i>Write a Review
+    </a>
+</div>
+
+<!-- List of Individual Reviews -->
+<div class="review-list-container">
+
+    <!-- Review Card 1: Positive -->
+    <div class="review-card">
+        <div class="review-card-header">
+            <div class="reviewer-info">
+                <img src="https://placehold.co/100x100/2ecc71/ffffff?text=JS" alt="Reviewer Avatar" />
+                <div>
+                    <strong>John S.</strong>
+                    <span>Posted on Oct 28, 2023</span>
+                </div>
+            </div>
+            <div class="star-rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+            </div>
+        </div>
+        <div class="review-card-body">
+            <p>An amazing place to work! The culture is fantastic, very supportive, and you get to work with cutting-edge technology. Work-life balance is respected, and management is transparent. Highly recommended.</p>
+        </div>
+    </div>
+
+    <!-- Review Card 2: Mixed/Average -->
+    <div class="review-card">
+        <div class="review-card-header">
+            <div class="reviewer-info">
+                <img src="https://placehold.co/100x100/f39c12/ffffff?text=ER" alt="Reviewer Avatar" />
+                <div>
+                    <strong>Emily R.</strong>
+                    <span>Posted on Sep 15, 2023</span>
+                </div>
+            </div>
+            <div class="star-rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+        </div>
+        <div class="review-card-body">
+            <p>The compensation and benefits are top-notch, and the projects are interesting. However, the pace can be demanding, and some teams are siloed, which can slow down cross-functional work. Overall a good, but challenging, experience.</p>
+        </div>
+    </div>
+
+    <!-- Review Card 3: Constructive -->
+    <div class="review-card">
+        <div class="review-card-header">
+            <div class="reviewer-info">
+                <img src="https://placehold.co/100x100/9b59b6/ffffff?text=MK" alt="Reviewer Avatar" />
+                <div>
+                    <strong>Michael K.</strong>
+                    <span>Posted on Aug 02, 2023</span>
+                </div>
+            </div>
+            <div class="star-rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+        </div>
+        <div class="review-card-body">
+            <p>A solid company with smart people. My only feedback is that the internal tools could use a major overhaul, which sometimes adds friction to daily tasks. The team itself is great, though.</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,144 @@
+﻿@model JobPortalMVC.Models.SkillModel;
+
+@{
+    ViewData["Title"] = "List of Skills";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+        <form asp-action="AddSkills" method="post" id="master-skill-form">
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0">Manage Your Skills</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="skill-select" class="form-label">Select a skill to add:</label>
+                        <select id="skill-select" class="form-select form-select-lg">
+                            <!-- Options added by JS -->
+                        </select>
+                    </div>
+                    <button type="button" id="add-skill-btn" class="btn btn-info w-100">Add Skill to List</button>
+
+                    <div class="skills-list-container">
+                        <h5 class="mt-4">Your Selected Skills:</h5>
+                        <ul id="selected-skills-list" class="list-group mb-3">
+                            <li id="empty-list-message" class="list-group-item text-muted">
+                                No skills have been added yet.
+                            </li>
+                        </ul>
+                        <div id="hidden-skills-container"></div>
+                    </div>
+                </div>
+
+                <div class="card-footer text-end">
+                    <a asp-controller="JobSeeker" asp-action="SkillsList" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-success">Save Skills</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const masterSkillList = ["JavaScript", "Python", "Java", "C#", "PHP", "C++", "TypeScript", "Ruby", "Swift", "Go", "HTML", "CSS", "SQL", "React", "Angular", "Vue.js", "Node.js", "Django", "Flask", "Spring Boot", "Git"];
+
+            const existingSkills = @Json.Serialize(Model?.Skills ?? new List<string>());
+
+            let availableSkills = masterSkillList.filter(skill => !existingSkills.includes(skill));
+
+            const masterForm = document.getElementById('master-skill-form');
+            const skillSelect = document.getElementById('skill-select');
+            const addButton = document.getElementById('add-skill-btn');
+            const skillsList = document.getElementById('selected-skills-list');
+            const emptyMessage = document.getElementById('empty-list-message');
+            const hiddenSkillsContainer = document.getElementById('hidden-skills-container');
+
+            const populateSkillsDropdown = () => {
+                skillSelect.innerHTML = '';
+                const placeholderOption = new Option("Select a skill...", "", true, true);
+                placeholderOption.disabled = true;
+                skillSelect.add(placeholderOption);
+                availableSkills.sort().forEach(skill => skillSelect.add(new Option(skill, skill)));
+                skillSelect.selectedIndex = 0;
+            };
+
+            const updateEmptyMessage = () => {
+                const hasItems = skillsList.querySelector('li:not(#empty-list-message)');
+                emptyMessage.style.display = hasItems ? 'none' : 'block';
+            };
+
+            const createSkillListItem = (skillName) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.dataset.skill = skillName;
+                listItem.textContent = skillName;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn-close';
+                removeBtn.setAttribute('aria-label', `Remove ${skillName}`);
+
+                removeBtn.addEventListener('click', () => removeSkill(listItem, skillName));
+
+                listItem.appendChild(removeBtn);
+                skillsList.appendChild(listItem);
+            };
+
+            const addSkill = () => {
+                const selectedSkill = skillSelect.value;
+                if (!selectedSkill) return;
+
+                createSkillListItem(selectedSkill);
+                availableSkills = availableSkills.filter(s => s !== selectedSkill);
+                populateSkillsDropdown();
+                updateEmptyMessage();
+            };
+
+            const removeSkill = (listItemElement, skillName) => {
+                listItemElement.remove();
+                availableSkills.push(skillName);
+                populateSkillsDropdown();
+                updateEmptyMessage();
+            };
+
+            const handleFormSubmit = (event) => {
+                hiddenSkillsContainer.innerHTML = '';
+                const selectedSkillElements = skillsList.querySelectorAll('li[data-skill]');
+
+                if (selectedSkillElements.length === 0) {
+                    alert("Please add at least one skill before saving.");
+                    event.preventDefault();
+                    return;
+                }
+
+                selectedSkillElements.forEach(li => {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    // This 'name' binds to the 'Skills' property of your C# model.
+                    hiddenInput.name = 'Skills';
+                    hiddenInput.value = li.dataset.skill;
+                    hiddenSkillsContainer.appendChild(hiddenInput);
+                });
+            };
+
+            // Initialize the page
+            existingSkills.forEach(skill => createSkillListItem(skill));
+            populateSkillsDropdown();
+            updateEmptyMessage();
+
+            // Bind events
+            addButton.addEventListener('click', addSkill);
+            masterForm.addEventListener('submit', handleFormSubmit);
+
+        });
+    </script>
+}

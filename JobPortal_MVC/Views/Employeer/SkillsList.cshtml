@@ -1,0 +1,285 @@
+﻿@{
+    ViewData["Title"] = "Skills Management";
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+}
+
+<!-- Dependency for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+<style>
+    /* Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --skills-bg: #f4f7f6;
+        --skills-card-bg: #ffffff;
+        --skills-text: #2c3e50;
+        --skills-text-secondary: #566573;
+        --skills-text-muted: #7f8c8d;
+        --skills-border: #ecf0f1;
+        --skills-hover-bg: #f9fafb;
+        --skills-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        --skills-accent: #3498db;
+        --skills-accent-hover: #2980b9;
+        --skills-btn-primary: #3498db;
+        --skills-btn-primary-hover: #2980b9;
+        --skills-btn-outline-primary: #3498db;
+        --skills-btn-outline-primary-border: #aed6f1;
+        --skills-btn-outline-primary-hover: #eaf4fc;
+        --skills-btn-outline-danger: #e74c3c;
+        --skills-btn-outline-danger-border: #f5b7b1;
+        --skills-btn-outline-danger-hover: #fdedec;
+        --skills-btn-outline-danger-hover-text: #c0392b;
+    }
+
+    [data-bs-theme="dark"] {
+        --skills-bg: #0f1521;
+        --skills-card-bg: #1a2234;
+        --skills-text: #e5e9f0;
+        --skills-text-secondary: #9aa4bd;
+        --skills-text-muted: #6b7280;
+        --skills-border: #2a3245;
+        --skills-hover-bg: #374151;
+        --skills-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        --skills-accent: #6078ff;
+        --skills-accent-hover: #5983ff;
+        --skills-btn-primary: #6078ff;
+        --skills-btn-primary-hover: #5983ff;
+        --skills-btn-outline-primary: #6078ff;
+        --skills-btn-outline-primary-border: #4b5563;
+        --skills-btn-outline-primary-hover: #1d2942;
+        --skills-btn-outline-danger: #ef4444;
+        --skills-btn-outline-danger-border: #7f1d1d;
+        --skills-btn-outline-danger-hover: #431f20;
+        --skills-btn-outline-danger-hover-text: #ef4444;
+    }
+
+    .skills-list-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--skills-bg);
+        padding: 20px 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        max-width: 1140px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .page-header h1 {
+        color: var(--skills-text);
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    /* The main card holding the list/table */
+    .list-card {
+        max-width: 1140px;
+        margin: 0 auto;
+        background-color: var(--skills-card-bg);
+        border-radius: 8px;
+        box-shadow: var(--skills-shadow);
+        border-left: 5px solid var(--skills-accent);
+        padding: 10px 30px 20px; /* Less top padding as the table has its own */
+        transition: all 0.3s ease;
+    }
+
+    /* Improved Table Styles */
+    .skills-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .skills-table thead th {
+        text-align: left;
+        padding: 15px 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--skills-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--skills-border);
+        transition: all 0.3s ease;
+    }
+
+    .skills-table tbody tr {
+        border-bottom: 1px solid var(--skills-border);
+        transition: all 0.3s ease;
+    }
+
+    .skills-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .skills-table tbody tr:hover {
+        background-color: var(--skills-hover-bg);
+    }
+
+    .skills-table tbody td {
+        padding: 15px 10px;
+        vertical-align: middle;
+        color: var(--skills-text-secondary);
+        transition: all 0.3s ease;
+    }
+
+    .skills-table .skill-name {
+        font-weight: 500;
+        color: var(--skills-text);
+        transition: color 0.3s ease;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: var(--skills-btn-primary);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--skills-btn-primary-hover);
+        color: white;
+    }
+
+    .btn-sm.btn-outline-primary {
+        color: var(--skills-btn-outline-primary);
+        border-color: var(--skills-btn-outline-primary-border);
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm.btn-outline-primary:hover {
+        background-color: var(--skills-btn-outline-primary-hover);
+        color: var(--skills-btn-outline-primary);
+    }
+
+    .btn-sm.btn-outline-danger {
+        color: var(--skills-btn-outline-danger);
+        border-color: var(--skills-btn-outline-danger-border);
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm.btn-outline-danger:hover {
+        background-color: var(--skills-btn-outline-danger-hover);
+        color: var(--skills-btn-outline-danger-hover-text);
+    }
+
+    .action-buttons a {
+        margin: 0 4px;
+        padding: 6px 10px; /* Make buttons slightly larger */
+    }
+
+    .action-buttons {
+        min-width: 100px;
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+</style>
+
+<div class="skills-list-page">
+    <div class="page-header">
+        <h1>Skills Management</h1>
+        <a asp-action="AddSkill" asp-controller="Employeer" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i>Add New Skill
+        </a>
+    </div>
+
+    <div class="list-card">
+        <div class="table-responsive mt-3">
+            <table class="skills-table">
+                <thead>
+                    <tr>
+                        <th>Skill Name</th>
+                        <th>Created At</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Hardcoded Row 1 -->
+                    <tr>
+                        <td class="skill-name">C#</td>
+                        <td>10/31/2023 10:45 AM</td>
+                        <td class="text-end action-buttons">
+                            <a asp-action="EditSkill" asp-route-id="1" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <a asp-action="DeleteSkill" asp-route-id="1" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- Hardcoded Row 2 -->
+                    <tr>
+                        <td class="skill-name">ASP.NET Core</td>
+                        <td>10/30/2023 03:20 PM</td>
+                        <td class="text-end action-buttons">
+                            <a asp-action="EditSkill" asp-route-id="2" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <a asp-action="DeleteSkill" asp-route-id="2" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- Hardcoded Row 3 -->
+                    <tr>
+                        <td class="skill-name">JavaScript</td>
+                        <td>10/28/2023 09:00 AM</td>
+                        <td class="text-end action-buttons">
+                            <a asp-action="EditSkill" asp-route-id="3" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <a asp-action="DeleteSkill" asp-route-id="3" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- Hardcoded Row 4 -->
+                    <tr>
+                        <td class="skill-name">SQL Server</td>
+                        <td>10/25/2023 05:15 PM</td>
+                        <td class="text-end action-buttons">
+                            <a asp-action="EditSkill" asp-route-id="4" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <a asp-action="DeleteSkill" asp-route-id="4" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- Hardcoded Row 5 -->
+                    <tr>
+                        <td class="skill-name">Azure DevOps</td>
+                        <td>10/22/2023 11:00 AM</td>
+                        <td class="text-end action-buttons">
+                            <a asp-action="EditSkill" asp-route-id="5" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <a asp-action="DeleteSkill" asp-route-id="5" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <!-- Hardcoded Row 6 -->
+                    <tr>
+                        <td class="skill-name">UI/UX Design</td>
+                        <td>10/20/2023 01:30 PM</td>
+                        <td class="text-end action-buttons">
+                            <a asp-action="EditSkill" asp-route-id="6" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <a asp-action="DeleteSkill" asp-route-id="6" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

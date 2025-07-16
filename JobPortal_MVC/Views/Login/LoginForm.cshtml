@@ -1,0 +1,519 @@
+﻿@model JobPortalMVC.Models.LoginModel
+
+@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    ViewData["Title"] = "Login";
+}
+
+<style>
+    /* Further reduced height with more compact design */
+    .login-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        width: 100%;
+        padding: 15px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .login-card {
+        background-color: white;
+        border-radius: 14px;
+        box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        width: 100%;
+        max-width: 480px;
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1.5rem; /* Further reduced padding */
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 1.25rem; /* Further reduced margin */
+    }
+
+        .login-header .logo-container {
+            position: relative;
+            width: 70px; /* Further reduced size */
+            height: 70px; /* Further reduced size */
+            margin: 0 auto 0.75rem; /* Further reduced margin */
+        }
+
+        .login-header .logo-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            border-radius: 50%;
+            filter: blur(12px);
+            opacity: 0.5;
+        }
+
+        .login-header .logo {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem; /* Further reduced size */
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+            z-index: 1;
+        }
+
+    .login-title {
+        font-size: 1.5rem; /* Further reduced size */
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 0.15rem; /* Further reduced margin */
+    }
+
+    .login-subtitle {
+        font-size: 0.8rem; /* Further reduced size */
+        color: #6B7280;
+    }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 1rem; /* Further reduced margin */
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6B7280;
+        font-size: 0.9rem; /* Further reduced size */
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.5rem; /* Further reduced padding */
+        border: 1px solid #E5E7EB;
+        border-radius: 0.5rem;
+        font-size: 0.9rem; /* Further reduced size */
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        background-color: #F9FAFB;
+    }
+
+        .form-input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            outline: none;
+            background-color: white;
+        }
+
+    .btn-primary {
+        width: 100%;
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        color: white;
+        padding: 0.65rem 1rem; /* Further reduced padding */
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem; /* Further reduced size */
+        letter-spacing: 0.025em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2), 0 2px 4px -1px rgba(59, 130, 246, 0.1);
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.1);
+        }
+
+    .btn-icon {
+        margin-right: 0.5rem; /* Further reduced margin */
+        font-size: 0.9rem; /* Further reduced size */
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem; /* Further reduced margin */
+        font-size: 0.85rem; /* Reduced text size */
+    }
+
+    .form-check-input {
+        margin-right: 0.4rem; /* Further reduced margin */
+        width: 0.9rem;
+        height: 0.9rem;
+        cursor: pointer;
+        accent-color: #3B82F6;
+    }
+
+    .social-login {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem; /* Further reduced gap */
+        margin-top: 1rem; /* Further reduced margin */
+    }
+
+    .social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.65rem; /* Further reduced padding */
+        border: 1px solid #E5E7EB;
+        border-radius: 0.5rem;
+        background-color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem; /* Further reduced size */
+    }
+
+        .social-btn:hover {
+            background-color: #F9FAFB;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1rem 0; /* Further reduced margin */
+    }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+    .divider-text {
+        padding: 0 1rem;
+        color: #6B7280;
+        font-size: 0.8rem; /* Further reduced size */
+        font-weight: 500;
+    }
+
+    .text-danger {
+        color: #DC2626;
+        font-size: 0.8rem; /* Further reduced size */
+        margin-top: 0.2rem; /* Further reduced margin */
+        display: block;
+    }
+
+    .register-link {
+        text-align: center;
+        margin-top: 1rem; /* Further reduced margin */
+        font-size: 0.8rem; /* Further reduced size */
+        color: #6B7280;
+    }
+
+        .register-link a {
+            color: #3B82F6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .register-link a:hover {
+                text-decoration: underline;
+            }
+
+    .current-info {
+        text-align: center;
+        font-size: 0.7rem; /* Small text */
+        color: #9CA3AF;
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px dashed #E5E7EB;
+    }
+
+    /* Dark mode styles */
+    html.dark .login-card {
+        background: rgba(17, 24, 39, 0.85);
+        border-color: rgba(55, 65, 81, 0.3);
+        box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    html.dark .login-title {
+        color: #F9FAFB;
+    }
+
+    html.dark .login-subtitle {
+        color: #D1D5DB;
+    }
+
+    html.dark .form-input {
+        background-color: #1F2937;
+        border-color: #374151;
+        color: #F9FAFB;
+    }
+
+        html.dark .form-input:focus {
+            background-color: #111827;
+            border-color: #3B82F6;
+        }
+
+    html.dark .input-icon {
+        color: #9CA3AF;
+    }
+
+    html.dark .social-btn {
+        background-color: #1F2937;
+        border-color: #374151;
+        color: #F9FAFB;
+    }
+
+        html.dark .social-btn:hover {
+            background-color: #374151;
+        }
+
+    html.dark .divider::before,
+    html.dark .divider::after {
+        border-color: #374151;
+    }
+
+    html.dark .divider-text {
+        color: #9CA3AF;
+    }
+
+    html.dark .register-link {
+        color: #D1D5DB;
+    }
+
+        html.dark .register-link a {
+            color: #60A5FA;
+        }
+
+    html.dark .current-info {
+        color: #6B7280;
+        border-color: #374151;
+    }
+
+    /* Password toggle button */
+    .password-toggle {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6B7280;
+        cursor: pointer;
+        z-index: 10;
+        font-size: 0.9rem; /* Further reduced size */
+        padding: 0.2rem;
+    }
+
+    html.dark .password-toggle {
+        color: #9CA3AF;
+    }
+
+    .password-toggle:hover {
+        color: #3B82F6;
+    }
+
+    html.dark .password-toggle:hover {
+        color: #60A5FA;
+    }
+
+    /* Animation classes */
+    .fade-in {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Floating animation */
+    .float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100%
+
+    {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    }
+
+    /* Pulse animation for login button */
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%
+
+    {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-card fade-in">
+        <div class="login-header">
+            <div class="logo-container">
+                <div class="logo-bg"></div>
+                <div class="logo float">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+            </div>
+            <h3 class="login-title dark:text-white">Job Portal Login</h3>
+            <p class="login-subtitle dark:text-gray-300">Sign in to explore opportunities</p>
+        </div>
+
+        <form asp-controller="Login" asp-action="LoginForm" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Email Field -->
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <label asp-for="Email" class="sr-only"></label>
+                <input asp-for="Email" class="form-input" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <label asp-for="Password" class="sr-only"></label>
+                <input asp-for="Password" class="form-input" placeholder="Enter your password" type="password" id="password" />
+                <button type="button" class="password-toggle" id="password-toggle">
+                    <i class="fas fa-eye" id="password-icon"></i>
+                </button>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="form-check">
+                <input type="checkbox" id="remember" name="RememberMe" class="form-check-input" />
+                <label for="remember" class="text-gray-700 dark:text-gray-300">Remember me</label>
+                <a href="#" class="ml-auto text-blue-600 dark:text-blue-400 text-sm font-medium">Forgot?</a>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="btn-primary pulse">
+                <i class="fas fa-sign-in-alt btn-icon"></i> Login
+            </button>
+
+            <!-- Social Login Divider -->
+            <div class="divider">
+                <span class="divider-text">Or continue with</span>
+            </div>
+
+            <!-- Social Login Buttons -->
+            <div class="social-login">
+                <button type="button" class="social-btn">
+                    <i class="fab fa-google text-red-500"></i>
+                </button>
+                <button type="button" class="social-btn">
+                    <i class="fab fa-github text-gray-800 dark:text-white"></i>
+                </button>
+                <button type="button" class="social-btn">
+                    <i class="fab fa-linkedin text-blue-500"></i>
+                </button>
+            </div>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                Don't have an account?
+                <a asp-controller="Registration" asp-action="RegistrationForm">Register Here</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password visibility toggle
+            const passwordField = document.getElementById('password');
+            const passwordToggle = document.getElementById('password-toggle');
+            const passwordIcon = document.getElementById('password-icon');
+
+            if (passwordToggle && passwordField && passwordIcon) {
+                passwordToggle.addEventListener('click', function() {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+
+                    if (type === 'password') {
+                        passwordIcon.classList.remove('fa-eye-slash');
+                        passwordIcon.classList.add('fa-eye');
+                    } else {
+                        passwordIcon.classList.remove('fa-eye');
+                        passwordIcon.classList.add('fa-eye-slash');
+                    }
+                });
+            }
+
+            // Simple fade-in animations for elements
+            const elements = [
+                document.querySelector('.login-header'),
+                ...document.querySelectorAll('.input-group'),
+                document.querySelector('.form-check'),
+                document.querySelector('.btn-primary'),
+                document.querySelector('.social-login'),
+                document.querySelector('.register-link'),
+                document.querySelector('.current-info')
+            ];
+
+            elements.forEach((el, index) => {
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(15px)';
+
+                    setTimeout(() => {
+                        el.style.transition = 'all 0.4s ease';
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, 100 + (index * 80));
+                }
+            });
+        });
+    </script>
+}

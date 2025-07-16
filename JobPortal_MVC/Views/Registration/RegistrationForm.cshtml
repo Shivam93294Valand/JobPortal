@@ -1,0 +1,493 @@
+﻿@model JobPortalMVC.Models.RegistrationModel
+
+@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    ViewData["Title"] = "Register";
+}
+
+<style>
+    /* Core styles with improved design */
+    .register-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        width: 100%;
+        padding: 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .register-card {
+        background-color: white;
+        border-radius: 14px;
+        box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        width: 100%;
+        max-width: 580px;
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1.5rem;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+        .register-header .logo-container {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 0.75rem;
+        }
+
+        .register-header .logo-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            border-radius: 50%;
+            filter: blur(12px);
+            opacity: 0.5;
+        }
+
+        .register-header .logo {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+            z-index: 1;
+        }
+
+    .register-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 0.15rem;
+    }
+
+    .register-subtitle {
+        font-size: 0.8rem;
+        color: #6B7280;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-col {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6B7280;
+        font-size: 0.9rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.5rem;
+        border: 1px solid #E5E7EB;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        background-color: #F9FAFB;
+    }
+
+        .form-input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            outline: none;
+            background-color: white;
+        }
+
+    .form-select {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.5rem;
+        border: 1px solid #E5E7EB;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        background-color: #F9FAFB;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1em;
+    }
+
+        .form-select:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            outline: none;
+            background-color: white;
+        }
+
+    .btn-primary {
+        width: 100%;
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        color: white;
+        padding: 0.65rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 0.025em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2), 0 2px 4px -1px rgba(59, 130, 246, 0.1);
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.1);
+        }
+
+    .btn-icon {
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .text-danger {
+        color: #DC2626;
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
+        display: block;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 0.8rem;
+        color: #6B7280;
+    }
+
+        .login-link a {
+            color: #3B82F6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .login-link a:hover {
+                text-decoration: underline;
+            }
+
+    /* Password toggle button */
+    .password-toggle {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6B7280;
+        cursor: pointer;
+        z-index: 10;
+        font-size: 0.9rem;
+        padding: 0.2rem;
+    }
+
+        .password-toggle:hover {
+            color: #3B82F6;
+        }
+
+    /* Dark mode styles */
+    html.dark .register-card {
+        background: rgba(17, 24, 39, 0.85);
+        border-color: rgba(55, 65, 81, 0.3);
+        box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    html.dark .register-title {
+        color: #F9FAFB;
+    }
+
+    html.dark .register-subtitle {
+        color: #D1D5DB;
+    }
+
+    html.dark .form-input,
+    html.dark .form-select {
+        background-color: #1F2937;
+        border-color: #374151;
+        color: #F9FAFB;
+    }
+
+        html.dark .form-input:focus,
+        html.dark .form-select:focus {
+            background-color: #111827;
+            border-color: #3B82F6;
+        }
+
+    html.dark .input-icon {
+        color: #9CA3AF;
+    }
+
+    html.dark .login-link {
+        color: #D1D5DB;
+    }
+
+        html.dark .login-link a {
+            color: #60A5FA;
+        }
+
+    html.dark .password-toggle {
+        color: #9CA3AF;
+    }
+
+        html.dark .password-toggle:hover {
+            color: #60A5FA;
+        }
+
+    /* Animation classes */
+    .fade-in {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Floating animation */
+    .float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100%
+
+    {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    }
+
+    /* Pulse animation for register button */
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%
+
+    {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card fade-in">
+        <div class="register-header">
+            <div class="logo-container">
+                <div class="logo-bg"></div>
+                <div class="logo float">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+            </div>
+            <h3 class="register-title dark:text-white">Create Your Account</h3>
+            <p class="register-subtitle dark:text-gray-300">Join our community and find your dream job</p>
+        </div>
+
+        <form asp-controller="Account" asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Name Fields -->
+            <div class="form-row">
+                <!-- First Name -->
+                <div class="form-col">
+                    <div class="input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <label asp-for="FirstName" class="sr-only"></label>
+                        <input asp-for="FirstName" class="form-input" placeholder="First Name" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Last Name -->
+                <div class="form-col">
+                    <div class="input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <label asp-for="LastName" class="sr-only"></label>
+                        <input asp-for="LastName" class="form-input" placeholder="Last Name" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <label asp-for="Email" class="sr-only"></label>
+                <input asp-for="Email" class="form-input" placeholder="Email Address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="input-group">
+                <i class="fas fa-briefcase input-icon"></i>
+                <label asp-for="Role" class="sr-only"></label>
+                <select asp-for="Role" class="form-select">
+                    <option value="">-- Select your role --</option>
+                    <option value="JobSeeker">Job Seeker (I'm looking for a job)</option>
+                    <option value="HR">HR / Employer (I'm hiring)</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <!-- Password Fields -->
+            <div class="form-row">
+                <!-- Password -->
+                <div class="form-col">
+                    <div class="input-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <label asp-for="Password" class="sr-only"></label>
+                        <input asp-for="Password" class="form-input" placeholder="Password" type="password" id="password" />
+                        <button type="button" class="password-toggle" id="password-toggle">
+                            <i class="fas fa-eye" id="password-icon"></i>
+                        </button>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-col">
+                    <div class="input-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <label asp-for="ConfirmPassword" class="sr-only"></label>
+                        <input asp-for="ConfirmPassword" class="form-input" placeholder="Confirm Password" type="password" id="confirm-password" />
+                        <button type="button" class="password-toggle" id="confirm-password-toggle">
+                            <i class="fas fa-eye" id="confirm-password-icon"></i>
+                        </button>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Button -->
+            <button type="submit" class="btn-primary pulse mt-3">
+                <i class="fas fa-user-plus btn-icon"></i> Create Account
+            </button>
+
+            <!-- Login Link -->
+            <div class="login-link mt-4">
+                Already have an account?
+                <a asp-controller="Login" asp-action="LoginForm">Login Here</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password visibility toggles
+            const setupPasswordToggle = (passwordId, toggleId, iconId) => {
+                const passwordField = document.getElementById(passwordId);
+                const passwordToggle = document.getElementById(toggleId);
+                const passwordIcon = document.getElementById(iconId);
+
+                if (passwordToggle && passwordField && passwordIcon) {
+                    passwordToggle.addEventListener('click', function() {
+                        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                        passwordField.setAttribute('type', type);
+
+                        if (type === 'password') {
+                            passwordIcon.classList.remove('fa-eye-slash');
+                            passwordIcon.classList.add('fa-eye');
+                        } else {
+                            passwordIcon.classList.remove('fa-eye');
+                            passwordIcon.classList.add('fa-eye-slash');
+                        }
+                    });
+                }
+            };
+
+            setupPasswordToggle('password', 'password-toggle', 'password-icon');
+            setupPasswordToggle('confirm-password', 'confirm-password-toggle', 'confirm-password-icon');
+
+            // Simple fade-in animations for elements
+            const elements = [
+                document.querySelector('.register-header'),
+                ...document.querySelectorAll('.form-row'),
+                ...document.querySelectorAll('.input-group:not(.form-row .input-group)'),
+                document.querySelector('.btn-primary'),
+                document.querySelector('.login-link')
+            ];
+
+            elements.forEach((el, index) => {
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(15px)';
+
+                    setTimeout(() => {
+                        el.style.transition = 'all 0.4s ease';
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, 100 + (index * 80));
+                }
+            });
+        });
+    </script>
+}

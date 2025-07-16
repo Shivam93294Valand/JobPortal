@@ -1,0 +1,348 @@
+﻿@{
+    ViewData["Title"] = "Job Details - Senior .NET Developer";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<!-- Dependency: Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    body {
+        background-color: #f4f7f6;
+    }
+
+    .job-details-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Back Navigation Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: #566573;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+        .back-link:hover {
+            color: #2c3e50;
+        }
+
+    /* Main Header for Job Title and Actions */
+    .job-header {
+        background-color: #ffffff;
+        padding: 25px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap; /* Allows wrapping on smaller screens */
+        gap: 20px;
+    }
+
+    .job-title-section h1 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    .job-title-section .company-info {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+    }
+
+        .job-title-section .company-info a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+    .job-header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center; /* Vertically align items */
+    }
+
+    /* Two-Column Layout for Main Content */
+    .job-body {
+        display: grid;
+        grid-template-columns: 2.5fr 1fr; /* Main content is 2.5x wider than sidebar */
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    /* Job Description Section (Left Column) */
+    .job-description {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+        .job-description h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+            .job-description h3:first-child {
+                margin-top: 0;
+            }
+
+        .job-description p {
+            color: #566573;
+            line-height: 1.7;
+        }
+
+        .job-description ul {
+            padding-left: 20px;
+            color: #566573;
+        }
+
+            .job-description ul li {
+                margin-bottom: 8px;
+            }
+
+    /* Sidebar Section (Right Column) */
+    .job-sidebar .summary-card,
+    .job-sidebar .company-card {
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+
+        .job-sidebar .summary-card h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+    .detail-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+        .detail-item i {
+            font-size: 1rem;
+            color: #3498db;
+            width: 25px;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #34495e;
+        }
+
+        .detail-item span {
+            color: #566573;
+        }
+
+    .company-card img {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .company-card h4 {
+        font-size: 1.2rem;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+
+    .company-card p {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+    }
+
+    /* Button Styles */
+    .btn {
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-apply {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+        .btn-apply:hover {
+            background-color: #27ae60;
+        }
+
+    .btn-save {
+        background: #f1f2f6;
+        border-color: #dadfe1;
+        font-size: 1.6rem;
+        padding: 8px;
+        line-height: 1;
+        color: #7f8c8d; /* Default unsaved color */
+    }
+
+        .btn-save:hover {
+            background-color: #e1e5e8;
+        }
+
+        .btn-save.saved {
+            color: #f1c40f; /* Yellow/gold color when saved */
+        }
+
+    .btn-review {
+        background: #eaf4fc;
+        border-color: #aed6f1;
+        color: #3498db;
+    }
+
+        .btn-review:hover {
+            background-color: #d4eaf9;
+            border-color: #85c1e9;
+        }
+</style>
+
+<div class="job-details-page">
+
+    <a href="#" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Job Listings
+    </a>
+
+    <!-- JOB HEADER -->
+    <header class="job-header">
+        <div class="job-title-section">
+            <h1>Senior .NET Developer</h1>
+            <div class="company-info">
+                at <a href="#">Tech Innovators LLC</a> · New York, NY
+            </div>
+        </div>
+        <div class="job-header-actions">
+            <button class="btn btn-save saved" title="Unsave this job">
+                <i class="fa-solid fa-bookmark"></i>
+            </button>
+            <a href="#" class="btn btn-review" title="View Company Reviews">
+                <i class="fas fa-comments"></i> Reviews
+            </a>
+            <a href="#" class="btn btn-apply">
+                <i class="fas fa-paper-plane"></i> Apply Now
+            </a>
+        </div>
+    </header>
+
+    <!-- JOB BODY -->
+    <div class="job-body">
+
+        <!-- Left Column: Full Description -->
+        <main class="job-description">
+            <h3>Job Description</h3>
+            <p>
+                We are seeking an experienced and passionate Senior .NET Developer to join our dynamic engineering team. In this role, you will be responsible for designing, developing, and maintaining high-quality web applications using C# and the .NET framework. You will work in a collaborative, agile environment to build scalable and robust software solutions that meet our clients' needs.
+            </p>
+
+            <h3>Key Responsibilities</h3>
+            <ul>
+                <li>Design, develop, test, and deploy new web applications and services using .NET Core, C#, and ASP.NET.</li>
+                <li>Write clean, scalable, and well-documented code following best practices.</li>
+                <li>Collaborate with cross-functional teams, including product managers and designers, to define and ship new features.</li>
+                <li>Mentor junior developers and participate in code reviews to ensure high standards of quality.</li>
+                <li>Troubleshoot and debug applications, and provide ongoing support for production systems.</li>
+                <li>Participate in architectural discussions and contribute to the overall technical roadmap.</li>
+            </ul>
+
+            <h3>Qualifications</h3>
+            <ul>
+                <li>5+ years of professional experience in software development with C# and the .NET framework.</li>
+                <li>Strong experience with ASP.NET Core and building RESTful APIs.</li>
+                <li>Proficient with front-end technologies such as HTML, CSS, JavaScript, and a modern framework like Angular or React.</li>
+                <li>Solid understanding of SQL and experience with database technologies like SQL Server or PostgreSQL.</li>
+                <li>Experience with cloud platforms (Azure preferred) and CI/CD pipelines.</li>
+                <li>Excellent problem-solving skills and a proactive, team-oriented mindset.</li>
+            </ul>
+        </main>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="job-sidebar">
+            <div class="summary-card">
+                <h3>Job Summary</h3>
+                <div class="detail-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div><strong>Salary</strong><span>$120,000 - $150,000 / year</span></div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div><strong>Location</strong><span>New York, NY (Hybrid)</span></div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-briefcase"></i>
+                    <div><strong>Job Type</strong><span>Full-Time</span></div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-chart-line"></i>
+                    <div><strong>Experience Level</strong><span>Senior (5+ years)</span></div>
+                </div>
+                <div class="detail-item">
+                    <i class="far fa-calendar-times"></i>
+                    <div><strong>Expires On</strong><span>December 31, 2024</span></div>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <img src="https://placehold.co/100x100/3498db/ffffff?text=TI" alt="Company Logo">
+                <h4>About Tech Innovators LLC</h4>
+                <p>Tech Innovators is a leading provider of enterprise software solutions, dedicated to helping businesses streamline their operations and achieve digital transformation.</p>
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+<!-- SCRIPT FOR TOGGLE BUTTON FunCTIONALITY -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const saveButton = document.querySelector('.btn-save');
+        if (saveButton) {
+            saveButton.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+
+                // Toggle the 'saved' class on the button itself
+                this.classList.toggle('saved');
+
+                // Check the new state of the button
+                if (this.classList.contains('saved')) {
+                    // --- State: Job is now SAVED ---
+                    this.title = 'Unsave this job'; // Update tooltip
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid'); // Change to solid bookmark
+                } else {
+                    // --- State: Job is now UNSAVED ---
+                    this.title = 'Save this job'; // Update tooltip
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular'); // Change to regular/outline bookmark
+                }
+            });
+        }
+    });
+</script>

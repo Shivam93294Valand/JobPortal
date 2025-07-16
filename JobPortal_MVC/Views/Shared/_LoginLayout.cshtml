@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - JobPortalMVC</title>
+
+    <!-- Bootstrap (keeping original dependencies) -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Original CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/JobPortalMVC.styles.css" asp-append-version="true" />
+
+    <style>
+        /* Base styles */
+        :root {
+            --primary-color: #3B82F6;
+            --primary-hover: #2563EB;
+            --background-light: #F3F4F6;
+            --background-dark: #111827;
+            --text-light: #1F2937;
+            --text-dark: #F9FAFB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Dark mode */
+        html.dark body {
+            color: var(--text-dark);
+        }
+
+        /* Fixed Theme toggle - simplified and guaranteed visible */
+        #theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        html.dark #theme-toggle {
+            background-color: #1F2937;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        #theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .moon-icon {
+            font-size: 1.5rem;
+            color: #6B7280;
+        }
+
+        .sun-icon {
+            font-size: 1.5rem;
+            color: #FBBF24;
+        }
+
+        /* Background elements */
+        .background-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.5s ease;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.7) 0%, rgba(37, 99, 235, 0.7) 100%);
+            opacity: 0.7;
+            transition: background 0.5s ease, opacity 0.5s ease;
+        }
+
+        html.dark .image-overlay {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(7, 14, 29, 0.8) 100%);
+            opacity: 0.85;
+        }
+
+        /* Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* Theme toggle visible notice */
+        .toggle-notice {
+            position: fixed;
+            top: 30px;
+            right: 80px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #111827;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        html.dark .toggle-notice {
+            background-color: rgba(31, 41, 55, 0.9);
+            color: #F9FAFB;
+        }
+    </style>
+</head>
+<body>
+    <!-- Simple, guaranteed visible theme toggle button -->
+    <button id="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon moon-icon"></i>
+        <i class="fas fa-sun sun-icon" style="display: none;"></i>
+    </button>
+
+    <!-- Toggle notice -->
+    <div class="toggle-notice" id="toggle-notice">
+        Click to toggle theme
+    </div>
+
+    <!-- Background with professional images -->
+    <div class="background-wrapper">
+        <!-- Light mode image -->
+        <img src="https://images.unsplash.com/photo-1497215842964-222b430dc094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="" class="background-image" id="light-bg" />
+
+        <!-- Dark mode image -->
+        <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="" class="background-image" id="dark-bg" style="opacity: 0;" />
+
+        <div class="image-overlay"></div>
+    </div>
+
+    <div class="main-container">
+        <main role="main" style="width: 100%;">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Simple, reliable theme toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById('theme-toggle');
+            const moonIcon = document.querySelector('.moon-icon');
+            const sunIcon = document.querySelector('.sun-icon');
+            const lightBg = document.getElementById('light-bg');
+            const darkBg = document.getElementById('dark-bg');
+            const toggleNotice = document.getElementById('toggle-notice');
+
+            // Show notice initially
+            setTimeout(() => {
+                if (toggleNotice) {
+                    toggleNotice.style.opacity = '1';
+                    toggleNotice.style.transform = 'translateY(0)';
+
+                    // Hide notice after 3 seconds
+                    setTimeout(() => {
+                        toggleNotice.style.opacity = '0';
+                        toggleNotice.style.transform = 'translateY(-10px)';
+                    }, 3000);
+                }
+            }, 1500);
+
+            // Check for saved theme preference or use preferred color scheme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                applyDarkTheme();
+            } else {
+                applyLightTheme();
+            }
+
+            // Toggle theme when button is clicked
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    if (htmlElement.classList.contains('dark')) {
+                        applyLightTheme();
+                    } else {
+                        applyDarkTheme();
+                    }
+                });
+
+                // Hover effect
+                themeToggle.addEventListener('mouseenter', function() {
+                    if (toggleNotice) {
+                        toggleNotice.style.opacity = '1';
+                        toggleNotice.style.transform = 'translateY(0)';
+                    }
+                });
+
+                themeToggle.addEventListener('mouseleave', function() {
+                    if (toggleNotice) {
+                        toggleNotice.style.opacity = '0';
+                        toggleNotice.style.transform = 'translateY(-10px)';
+                    }
+                });
+            }
+
+            function applyDarkTheme() {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+
+                if (moonIcon) moonIcon.style.display = 'none';
+                if (sunIcon) sunIcon.style.display = 'block';
+
+                if (lightBg) lightBg.style.opacity = '0';
+                if (darkBg) darkBg.style.opacity = '0.8';
+            }
+
+            function applyLightTheme() {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+
+                if (moonIcon) moonIcon.style.display = 'block';
+                if (sunIcon) sunIcon.style.display = 'none';
+
+                if (lightBg) lightBg.style.opacity = '0.8';
+                if (darkBg) darkBg.style.opacity = '0';
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

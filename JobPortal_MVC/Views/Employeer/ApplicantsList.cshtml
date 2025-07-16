@@ -1,0 +1,391 @@
+﻿@*
+    This view would ideally use a ViewModel to pass data from the controller.
+    For example:
+    @model Company.Project.ViewModels.JobApplicantsViewModel
+
+    The ViewModel would contain:
+    - string JobTitle
+    - int JobId
+    - List<ApplicantDetailViewModel> Applicants
+
+    Each ApplicantDetailViewModel would contain:
+    - int ApplicationId
+    - int UserId // For linking to profile
+    - string ApplicantName
+    - string ApplicantEmail
+    - string ApplicantImageUrl
+    - DateTime AppliedDate
+    - string Status ("Applied", "Shortlisted", "Rejected", "Hired")
+*@
+
+@{
+    ViewData["Title"] = "Applicants for Senior Full-Stack Developer";
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml"; // Assumes this layout exists
+}
+
+<style>
+    /* Inherit base styles from the layout or provided theme */
+    .applicants-list-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f4f7f6;
+        padding: 20px 30px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+        .page-header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+            .page-header h1 .job-title-highlight {
+                color: #3498db;
+                font-weight: 700;
+            }
+
+    /* Filters and Toolbar */
+    .applicants-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .applicant-count {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #34495e;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Applicant Table Styles */
+    .applicants-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+        .applicants-table th,
+        .applicants-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: middle; /* Aligns dropdowns and buttons nicely */
+        }
+
+        .applicants-table thead {
+            background-color: #f8f9fa;
+        }
+
+        .applicants-table th {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .applicants-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .applicants-table tbody tr:hover {
+            background-color: #f9fbfd;
+        }
+
+    /* Applicant Info cell */
+    .applicant-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+        .applicant-info img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .applicant-info .details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .applicant-info .name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .applicant-info .email {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+    /* NEW: Status Dropdown Styles */
+    .status-dropdown {
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #dadfe1;
+        background-color: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"></path></svg>');
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        padding-right: 30px; /* Space for the arrow */
+    }
+
+        /* Colors will be applied via JS */
+        .status-dropdown.select-applied {
+            color: #3498db;
+            border-color: #3498db;
+            background-color: #eaf5ff;
+        }
+
+        .status-dropdown.select-shortlisted {
+            color: #2ecc71;
+            border-color: #2ecc71;
+            background-color: #eafaf1;
+        }
+
+        .status-dropdown.select-rejected {
+            color: #e74c3c;
+            border-color: #e74c3c;
+            background-color: #feeeee;
+        }
+
+        .status-dropdown.select-hired {
+            color: #9b59b6;
+            border-color: #9b59b6;
+            background-color: #f3eaff;
+        }
+
+
+    /* Action Buttons */
+    .actions-cell {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+    }
+
+    /* General Button Styles from your theme */
+    .btn {
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+        white-space: nowrap; /* Prevents button text from breaking */
+    }
+
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+    .btn-secondary {
+        background-color: #ecf0f1;
+        color: #34495e;
+        border-color: #dadfe1;
+    }
+
+        .btn-secondary:hover {
+            background-color: #e1e5e8;
+        }
+</style>
+
+<div class="applicants-list-page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Applicants for: <span class="job-title-highlight">Senior Full-Stack Developer</span></h1>
+        <a asp-action="MyJobPostings" asp-controller="Employeer" class="btn btn-secondary">← Back to All Jobs</a>
+    </div>
+
+    <!-- Toolbar and Filters -->
+    <div class="applicants-toolbar">
+        <div class="applicant-count">12 Total Applicants</div>
+        <div class="filter-buttons">
+            <a href="#" class="btn btn-primary">All</a>
+            <a href="#" class="btn btn-secondary">Shortlisted</a>
+            <a href="#" class="btn btn-secondary">New</a>
+        </div>
+    </div>
+
+    <!-- Applicants Table -->
+    <div class="table-container">
+        <table class="applicants-table">
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Applied On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ===== Hardcoded Applicant Row 1: Shortlisted ===== -->
+                <tr>
+                    <td>
+                        <div class="applicant-info">
+                            <img src="https://via.placeholder.com/100" alt="Applicant Avatar" />
+                            <div class="details">
+                                <span class="name">Jane Doe</span>
+                                <span class="email">jane.doe@example.com</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Oct 28, 2023</td>
+                    <td>
+                        <select class="status-dropdown" onchange="updateStatusColor(this)">
+                            <option value="Applied">Applied</option>
+                            <option value="Shortlisted" selected>Shortlisted</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Hired">Hired</option>
+                        </select>
+                    </td>
+                    <td class="actions-cell">
+                        <a href="#" class="btn btn-secondary">Download Resume</a>
+                        <a href="#" class="btn btn-secondary">View Profile</a>
+                    </td>
+                </tr>
+
+                <!-- ===== Hardcoded Applicant Row 2: New / Applied ===== -->
+                <tr>
+                    <td>
+                        <div class="applicant-info">
+                            <img src="https://via.placeholder.com/100" alt="Applicant Avatar" />
+                            <div class="details">
+                                <span class="name">John Smith</span>
+                                <span class="email">john.smith.dev@example.com</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Oct 27, 2023</td>
+                    <td>
+                        <select class="status-dropdown" onchange="updateStatusColor(this)">
+                            <option value="Applied" selected>Applied</option>
+                            <option value="Shortlisted">Shortlisted</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Hired">Hired</option>
+                        </select>
+                    </td>
+                    <td class="actions-cell">
+                        <a href="#" class="btn btn-secondary">Download Resume</a>
+                        <a href="#" class="btn btn-secondary">View Profile</a>
+                    </td>
+                </tr>
+
+                <!-- ===== Hardcoded Applicant Row 3: Rejected ===== -->
+                <tr>
+                    <td>
+                        <div class="applicant-info">
+                            <img src="https://via.placeholder.com/100" alt="Applicant Avatar" />
+                            <div class="details">
+                                <span class="name">Alex Johnson</span>
+                                <span class="email">alex.j@example.com</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Oct 25, 2023</td>
+                    <td>
+                        <select class="status-dropdown" onchange="updateStatusColor(this)">
+                            <option value="Applied">Applied</option>
+                            <option value="Shortlisted">Shortlisted</option>
+                            <option value="Rejected" selected>Rejected</option>
+                            <option value="Hired">Hired</option>
+                        </select>
+                    </td>
+                    <td class="actions-cell">
+                        <a href="#" class="btn btn-secondary">Download Resume</a>
+                        <a href="#" class="btn btn-secondary">View Profile</a>
+                    </td>
+                </tr>
+                <!-- ===== Hardcoded Applicant Row 4: Hired ===== -->
+                <tr>
+                    <td>
+                        <div class="applicant-info">
+                            <img src="https://via.placeholder.com/100" alt="Applicant Avatar" />
+                            <div class="details">
+                                <span class="name">Maria Garcia</span>
+                                <span class="email">m.garcia@example.com</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>Oct 22, 2023</td>
+                    <td>
+                        <select class="status-dropdown" onchange="updateStatusColor(this)">
+                            <option value="Applied">Applied</option>
+                            <option value="Shortlisted">Shortlisted</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Hired" selected>Hired</option>
+                        </select>
+                    </td>
+                    <td class="actions-cell">
+                        <a href="#" class="btn btn-secondary">Download Resume</a>
+                        <a href="#" class="btn btn-secondary">View Profile</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@* NEW: JavaScript to manage dropdown colors. Place this in a <script> tag. *@
+<script>
+    // This function changes the class of the dropdown based on the selected value.
+    // In a real application, the onchange event would also trigger an API call to save the new status.
+    function updateStatusColor(selectElement) {
+        // Reset classes
+        selectElement.className = 'status-dropdown';
+
+        // Get the selected value and add the corresponding class
+        const selectedStatus = selectElement.value;
+        if (selectedStatus) {
+            selectElement.classList.add('select-' + selectedStatus.toLowerCase());
+        }
+    }
+
+    // Run this function for all dropdowns on page load to set their initial color.
+    document.addEventListener('DOMContentLoaded', function() {
+        const allDropdowns = document.querySelectorAll('.status-dropdown');
+        allDropdowns.forEach(dropdown => {
+            updateStatusColor(dropdown);
+        });
+    });
+</script>

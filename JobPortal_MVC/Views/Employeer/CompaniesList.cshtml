@@ -1,0 +1,277 @@
+﻿@model List<JobPortalMVC.Models.CompanyModel>;
+
+@{
+    ViewData["Title"] = "Companies Management";
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+}
+
+<!-- Dependency for icons (already in layout, but harmless to keep) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+<style>
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem; /* Matches layout's default spacing */
+    }
+
+        .page-header h1 {
+            /* This color is now handled by the layout's .page-title class, no need to override */
+            margin: 0;
+        }
+
+    .list-card {
+        background-color: var(--theme-card-bg);
+        border: 1px solid var(--theme-card-border);
+        border-radius: 16px; /* Matched layout's app-card */
+        box-shadow: var(--theme-card-shadow);
+        border-left: 5px solid var(--theme-text-brand);
+        padding: 1rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .list-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08); /* Matched layout's app-card:hover */
+        }
+
+    /* Modern data table style, now using theme variables */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .data-table thead th {
+            text-align: left;
+            padding: 15px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--theme-text-secondary); /* THEME-AWARE */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--theme-border-color); /* THEME-AWARE */
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid var(--theme-border-color); /* THEME-AWARE */
+            transition: background-color 0.2s;
+        }
+
+            .data-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            .data-table tbody tr:hover {
+                background-color: var(--theme-brand-accent-bg); /* THEME-AWARE */
+            }
+
+        .data-table tbody td {
+            padding: 15px 10px;
+            vertical-align: middle;
+            color: var(--theme-text-primary); /* Default text color */
+        }
+
+        .data-table .item-name {
+            font-weight: 500;
+            color: var(--theme-text-primary); /* THEME-AWARE */
+        }
+
+        .data-table .item-website a {
+            color: var(--theme-text-brand); /* THEME-AWARE */
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .data-table .item-website a:hover {
+                text-decoration: underline;
+            }
+
+        .data-table .item-website .external-link-icon {
+            font-size: 0.8em;
+            margin-left: 5px;
+            opacity: 0.7;
+        }
+
+        .data-table .item-website .not-available {
+            color: var(--theme-text-secondary); /* THEME-AWARE */
+            font-style: italic;
+        }
+
+    .action-buttons {
+        text-align: right;
+        min-width: 120px; 
+    }
+</style>
+
+<div class="page-header">
+    <h1>Companies</h1>
+    <a asp-controller="Employeer" asp-action="AddEditCompany" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-2"></i>Add New Company
+    </a>
+</div>
+
+<!-- Display error messages if any -->
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">An Error Occurred!</h4>
+        <p>@ViewBag.ErrorMessage</p>
+        <hr>
+        <p class="mb-0">Please check that the API project is running and accessible.</p>
+    </div>
+}
+
+<div class="list-card">
+    <div class="table-responsive mt-3">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>CompanyId</th>
+                    <th>Name</th>
+                    <th>Website</th>
+                    <th>Logo Url</th>
+                    <th>Description</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var company in Model)
+                    {
+                        <tr>
+                            <td>@company.CompanyId</td>
+                            <td class="item-name">@company.Name</td>
+                            <td class="item-website">
+                                @if (!string.IsNullOrEmpty(company.Website))
+                                {
+                                    <a href="@company.Website" target="_blank">@company.Website <i class="fa-solid fa-arrow-up-right-from-square external-link-icon"></i></a>
+                                }
+                                else
+                                {
+                                    <span class="not-available">N/A</span>
+                                }
+                            </td>
+                            <td class="item-website">
+                                @if (!string.IsNullOrEmpty(company.LogoUrl))
+                                {
+                                    <a href="@company.LogoUrl" target="_blank">@company.LogoUrl <i class="fa-solid fa-arrow-up-right-from-square external-link-icon"></i></a>
+                                }
+                                else
+                                {
+                                    <span class="not-available">N/A</span>
+                                }
+                            </td>
+                            <td>@company.Description</td>
+                            <td>@company.CreatedAt.ToString("dd-MM-yyyy")</td>
+                            <td>@company.UpdatedAt?.ToString("dd-MM-yyyy")</td>
+                            <td class="action-buttons">
+                                <a asp-controller="Employeer" asp-action="AddEditCompany" asp-route-id="@company.CompanyId" class="btn btn-sm btn-outline-info" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-danger delete-link"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#deleteConfirmationModal"
+                                   data-delete-url="@Url.Action("DeleteCompany", "Employeer", new { id = company.CompanyId })"
+                                   data-company-name="@company.Name"
+                                   title="Delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else if (string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <h4 class="text-secondary">No companies have been found.</h4>
+                            <p class="text-secondary">Click the "Add New Company" button to get started.</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!--           START: DELETE CONFIRMATION MODAL          -->
+<!-- ============================================= -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the company: <strong id="companyNameToDelete"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteButton" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!--            END: DELETE CONFIRMATION MODAL           -->
+<!-- ============================================= -->
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteModal = document.getElementById('deleteConfirmationModal');
+            if (deleteModal) {
+                // Find the inner .modal-content and .modal-header elements
+                const modalContent = deleteModal.querySelector('.modal-content');
+                const modalHeader = deleteModal.querySelector('.modal-header');
+
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+
+                    // --- Debug Step 1: Check if this code is running ---
+                    console.log("Modal 'show' event triggered!");
+
+                    const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+
+                    // --- Debug Step 2: Check what theme is being detected ---
+                    console.log("Current theme detected:", currentTheme);
+
+                    // --- The Sledgehammer Approach: Use inline styles ---
+                    if (currentTheme === 'dark') {
+                        // Apply dark theme styles directly to the elements
+                        console.log("Applying DARK theme styles.");
+                        modalContent.style.backgroundColor = '#212529'; // Bootstrap's standard dark color
+                        modalContent.style.color = '#dee2e6';           // Bootstrap's standard dark text color
+                        modalHeader.style.borderBottomColor = '#495057';// Darker border for the header
+                    } else {
+                        // Revert to default styles for light theme
+                        console.log("Applying LIGHT theme styles.");
+                        modalContent.style.backgroundColor = ''; // Removes the inline style, allows CSS to take over
+                        modalContent.style.color = '';
+                        modalHeader.style.borderBottomColor = '';
+                    }
+
+                    // --- Your existing code to update modal content ---
+                    const button = event.relatedTarget;
+                    const deleteUrl = button.getAttribute('data-delete-url');
+                    const companyName = button.getAttribute('data-company-name');
+                    const confirmDeleteButton = deleteModal.querySelector('#confirmDeleteButton');
+                    const companyNameElement = deleteModal.querySelector('#companyNameToDelete');
+                    confirmDeleteButton.setAttribute('href', deleteUrl);
+                    companyNameElement.textContent = companyName;
+                });
+            }
+        });
+    </script>
+}

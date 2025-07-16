@@ -1,0 +1,303 @@
+﻿@model List<JobPortalMVC.Models.JobCatagoryModel>
+
+@{
+    ViewData["Title"] = "Job Categories";
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+}
+
+<!-- Dependency for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+<style>
+    /* Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --category-bg: #f4f7f6;
+        --category-card-bg: #ffffff;
+        --category-text: #2c3e50;
+        --category-text-secondary: #566573;
+        --category-text-muted: #7f8c8d;
+        --category-border: #ecf0f1;
+        --category-hover-bg: #f9fafb;
+        --category-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        --category-accent: #3498db;
+        --category-accent-hover: #2980b9;
+        --category-btn-secondary: #566573;
+        --category-btn-secondary-border: #daddde;
+        --category-btn-secondary-hover: #e9ecef;
+        --category-btn-danger: #e74c3c;
+        --category-btn-danger-border: #f5b7b1;
+        --category-btn-danger-hover: #fdedec;
+    }
+
+    [data-bs-theme="dark"] {
+        --category-bg: #0f1521;
+        --category-card-bg: #1a2234;
+        --category-text: #e5e9f0;
+        --category-text-secondary: #9aa4bd;
+        --category-text-muted: #6b7280;
+        --category-border: #2a3245;
+        --category-hover-bg: #374151;
+        --category-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        --category-accent: #6078ff;
+        --category-accent-hover: #5983ff;
+        --category-btn-secondary: #9ca3af;
+        --category-btn-secondary-border: #4b5563;
+        --category-btn-secondary-hover: #374151;
+        --category-btn-danger: #ef4444;
+        --category-btn-danger-border: #7f1d1d;
+        --category-btn-danger-hover: #431f20;
+    }
+
+    .category-list-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--category-bg);
+        padding: 20px 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        max-width: 1140px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .page-header h1 {
+        color: var(--category-text);
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    .list-card {
+        max-width: 1140px;
+        margin: 0 auto;
+        background-color: var(--category-card-bg);
+        border-radius: 8px;
+        box-shadow: var(--category-shadow);
+        border-left: 5px solid var(--category-accent);
+        padding: 10px 30px 20px;
+        transition: all 0.3s ease;
+    }
+
+    /* A reusable, modern table style */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table thead th {
+        text-align: left;
+        padding: 15px 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--category-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--category-border);
+        transition: all 0.3s ease;
+    }
+
+    .data-table tbody tr {
+        border-bottom: 1px solid var(--category-border);
+        transition: all 0.3s ease;
+    }
+
+    .data-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: var(--category-hover-bg);
+    }
+
+    .data-table tbody td {
+        padding: 15px 10px;
+        vertical-align: middle;
+        color: var(--category-text-secondary);
+        transition: all 0.3s ease;
+    }
+
+    .data-table .item-name {
+        font-weight: 500;
+        color: var(--category-text);
+        transition: color 0.3s ease;
+    }
+
+    .action-buttons a {
+        margin: 0 4px;
+    }
+
+    .action-buttons {
+        text-align: right;
+        min-width: 120px;
+    }
+
+    .btn-primary {
+        background-color: var(--category-accent);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--category-accent-hover);
+    }
+
+    .btn-sm.btn-outline-secondary {
+        color: var(--category-btn-secondary);
+        border-color: var(--category-btn-secondary-border);
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm.btn-outline-secondary:hover {
+        background-color: var(--category-btn-secondary-hover);
+        color: var(--category-btn-secondary);
+    }
+
+    .btn-sm.btn-outline-danger {
+        color: var(--category-btn-danger);
+        border-color: var(--category-btn-danger-border);
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm.btn-outline-danger:hover {
+        background-color: var(--category-btn-danger-hover);
+        color: var(--category-btn-danger);
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+</style>
+
+<div class="category-list-page">
+    <div class="page-header">
+        <h1>Job Categories</h1>
+        <a asp-controller="Employeer" asp-action="AddEditCategory" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i>Add New Category
+        </a>
+    </div>
+
+    <div class="list-card">
+        <div class="table-responsive mt-3">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category Name</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.CategoryId</td>
+                                <td class="item-name">@item.CategoryName</td>
+                                <td>@item.CreatedAt?.ToString("dd-MM-yyyy")</td>
+                                <td>@item.UpdatedAt?.ToString("dd-MM-yyyy")</td>
+                                <td class="action-buttons">
+                                    <a asp-controller="Employeer" asp-action="AddEditCategory" asp-route-id="@item.CategoryId" class="btn btn-sm btn-outline-info" title="Edit">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-outline-danger"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#deleteConfirmationModal"
+                                       data-delete-url="@Url.Action("DeleteCategory", "Employeer", new { id = item.CategoryId })"
+                                       data-category-name="@item.CategoryName"
+                                       title="Delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="5" class="text-center py-4">No categories have been found.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Reusable Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the category: <strong id="categoryNameToDelete"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteButton" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        // This makes sure your form validation scripts are still included.
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteModal = document.getElementById('deleteConfirmationModal');
+
+            if (deleteModal) {
+                // Find the elements inside the modal just once for efficiency.
+                const modalContent = deleteModal.querySelector('.modal-content');
+                const modalHeader = deleteModal.querySelector('.modal-header');
+                const confirmDeleteButton = deleteModal.querySelector('#confirmDeleteButton');
+                // Use the selector for the category-specific element ID.
+                const categoryNameElement = deleteModal.querySelector('#categoryNameToDelete');
+
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+
+                    // --- Debugging and Theme Logic (from your preferred script) ---
+                    console.log("Modal 'show' event triggered!");
+                    const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+                    console.log("Current theme detected:", currentTheme);
+
+                    if (currentTheme === 'dark') {
+                        console.log("Applying DARK theme styles.");
+                        modalContent.style.backgroundColor = '#212529';
+                        modalContent.style.color = '#dee2e6';
+                        modalHeader.style.borderBottomColor = '#495057';
+                    } else {
+                        console.log("Applying LIGHT theme styles.");
+                        modalContent.style.backgroundColor = '';
+                        modalContent.style.color = '';
+                        modalHeader.style.borderBottomColor = '';
+                    }
+
+                    // --- Dynamic Content Logic (for Categories) ---
+                    const button = event.relatedTarget;
+                    const deleteUrl = button.getAttribute('data-delete-url');
+
+                    // This now correctly gets the 'data-category-name'.
+                    const categoryName = button.getAttribute('data-category-name');
+
+                    confirmDeleteButton.setAttribute('href', deleteUrl);
+                    categoryNameElement.textContent = categoryName;
+                });
+            }
+        });
+    </script>
+}

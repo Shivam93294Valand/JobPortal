@@ -1,0 +1,388 @@
+﻿@* @model IEnumerable<SavedJobViewModel>
+
+@{
+    ViewData["Title"] = "My Saved Jobs";
+    // Assuming you have a layout for job seekers.
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<style>
+    /* Using the excellent styles you provided, with a minor tweak for the accent color */
+    .job-list-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f4f7f6;
+        padding: 20px 30px;
+    }
+
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+        .page-header h1 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+    .job-list-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .no-jobs-message {
+        background-color: #fff;
+        padding: 40px;
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        color: #7f8c8d;
+    }
+
+        .no-jobs-message h3 {
+            margin-top: 0;
+            color: #34495e;
+        }
+
+        .no-jobs-message a {
+            margin-top: 15px;
+        }
+
+    .job-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        padding: 25px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        /* A gold accent for "saved" items */
+        border-left: 5px solid #f1c40f;
+    }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+        }
+
+    .job-card-header h2 {
+        font-size: 1.4rem;
+        color: #2c3e50;
+        margin: 0 0 5px 0;
+    }
+
+    .job-card-header .company-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #7f8c8d;
+    }
+
+    .job-card-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px 25px;
+        color: #34495e;
+        font-size: 0.95rem;
+        margin: 15px 0;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+    }
+
+        .detail-item svg {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+    .job-card-actions {
+        border-top: 1px solid #ecf0f1;
+        padding-top: 15px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .remove-form {
+        margin-bottom: 0; /* Remove default form margin */
+    }
+
+    /* Shared Button Styles */
+    .btn {
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #2ecc71; /* Green for Apply */
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #27ae60;
+        }
+
+    .btn-danger {
+        background-color: #f1f2f6;
+        color: #e74c3c;
+        border-color: #dadfe1;
+    }
+
+        .btn-danger:hover {
+            background-color: #fff0ef;
+        }
+</style>
+
+<div class="job-list-page">
+    <div class="page-header">
+        <h1>My Saved Jobs</h1>
+    </div>
+
+    <div class="job-list-container">
+
+        @if (!Model.Any())
+        {
+            <div class="no-jobs-message">
+                <h3>You haven't saved any jobs yet.</h3>
+                <p>Start exploring and save the jobs that interest you!</p>
+                <a href="@Url.Action("Index", "Jobs")" class="btn btn-primary" style="background-color: #3498db;">Find Jobs</a>
+            </div>
+        }
+        else
+        {
+            @foreach (var job in Model)
+            {
+                <div class="job-card">
+                    <div class="job-card-header">
+                        <h2>@job.Title</h2>
+                        <span class="company-name">@job.CompanyName</span>
+                    </div>
+                    <div class="job-card-details">
+                        <div class="detail-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path></svg>
+                            <span>@job.Location</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"></path></svg>
+                            <span>@job.JobType</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5z"></path></svg>
+                            <span>Saved on: @job.SavedAt.ToString("MMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                    <div class="job-card-actions">
+                        <a asp-controller="Jobs" asp-action="Details" asp-route-id="@job.JobId" class="btn btn-primary">Apply / View Details</a>
+
+                        <form asp-action="RemoveSavedJob" asp-controller="JobSeeker" class="remove-form" method="post" onsubmit="return confirm('Are you sure you want to remove this job from your saved list?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="savedJobId" value="@job.SavedJobId" />
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div> *@
+
+@{
+    ViewData["Title"] = "My Saved Jobs";
+    // Assuming a layout file for a Job Seeker. Change this if your layout has a different name.
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<!-- Dependency: Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* Main Page Styles */
+
+    .job-list-page {
+        background-color: #f4f7f6;
+        padding: 20px 30px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page-header h1 {
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+
+    .job-list-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    /* Message for when no jobs are saved */
+    .no-jobs-message {
+        background-color: #fff;
+        padding: 40px;
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        color: #7f8c8d;
+        border: 2px dashed #e0e0e0;
+    }
+
+        .no-jobs-message h3 {
+            margin-top: 0;
+            color: #34495e;
+        }
+
+        .no-jobs-message a {
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+    /* Saved Job Card Styles */
+    .job-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        padding: 25px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        /* A gold accent color for "saved" items */
+        border-left: 5px solid #f1c40f;
+    }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+        }
+
+    .job-card-header h2 {
+        font-size: 1.4rem;
+        color: #2c3e50;
+        margin: 0 0 5px 0;
+    }
+
+    .job-card-header .company-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #7f8c8d;
+    }
+
+    .job-card-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+        color: #34495e;
+        font-size: 0.95rem;
+        margin-top: 20px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+    }
+
+        .detail-item svg {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            fill: #7f8c8d;
+            flex-shrink: 0;
+        }
+
+    .job-card-actions {
+        border-top: 1px solid #ecf0f1;
+        padding-top: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    /* Button Styles */
+    .btn {
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Apply button style (Green for 'Go') */
+    .btn-apply {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+        .btn-apply:hover {
+            background-color: #27ae60;
+        }
+
+    /* Remove button style */
+    .btn-remove {
+        background-color: #fbeee color: #e74c3c;
+    }
+
+        .btn-remove:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+</style>
+
+<div class="job-list-page">
+    <div class="page-header">
+        <h1>My Saved Jobs</h1>
+    </div>
+
+    <div class="job-list-container">
+        <!-- If there are no saved jobs, you would show this message -->
+        <div class="no-jobs-message">
+            <h3>You haven't saved any jobs yet.</h3>
+            <p>Start exploring and save the jobs that interest you!</p>
+            <a href="#" class="btn btn-apply">Find Jobs Now</a>
+        </div>
+        <!-- ===== Hardcoded Saved Job 1 ===== -->
+        <div class="job-card">
+            <div class="job-card-header">
+                <h2>Senior .NET Developer</h2>
+                <span class="company-name">Tech Innovators LLC</span>
+            </div>
+            <div class="job-card-details">
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path></svg><span>New York, NY</span></div>
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"></path></svg><span>Full-Time</span></div>
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13z"></path></svg><span>$120,000 - $150,000</span></div>
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M19.5,3.5L18,2L14.5,5.5L11,2L9.5,3.5L13,7L9.5,10.5L11,12L14.5,8.5L18,12L19.5,10.5L16,7L19.5,3.5M19,23H5V7H19V23Z" /></svg><span>Saved on: May 20, 2024</span></div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-apply">Apply / View Details</a>
+                <button class="btn btn-remove"><i class="fas fa-trash-alt"></i> Remove</button>
+            </div>
+        </div>
+
+        <!-- ===== Hardcoded Saved Job 2 ===== -->
+        <div class="job-card">
+            <div class="job-card-header">
+                <h2>Frontend Engineer (React)</h2>
+                <span class="company-name">Creative Solutions Co.</span>
+            </div>
+            <div class="job-card-details">
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path></svg><span>Remote (USA)</span></div>
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"></path></svg><span>Contract</span></div>
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13z"></path></svg><span>$60 - $80 per hour</span></div>
+                <div class="detail-item"><svg viewBox="0 0 24 24"><path d="M19.5,3.5L18,2L14.5,5.5L11,2L9.5,3.5L13,7L9.5,10.5L11,12L14.5,8.5L18,12L19.5,10.5L16,7L19.5,3.5M19,23H5V7H19V23Z" /></svg><span>Saved on: May 18, 2024</span></div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-apply">Apply / View Details</a>
+                <button class="btn btn-remove"><i class="fas fa-trash-alt"></i> Remove</button>
+            </div>
+        </div>
+    </div>
+</div>

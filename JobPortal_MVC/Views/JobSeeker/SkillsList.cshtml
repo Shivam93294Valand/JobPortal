@@ -1,0 +1,46 @@
+﻿@model JobPortalMVC.Models.SkillsListModel
+
+@{
+    ViewData["Title"] = "Skills List";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4 class="mb-0">Master Skills List</h4>
+    </div>
+    <div class="card-body">
+
+        <!--
+            Check if the model and the Skills list exist and have items.
+            This prevents errors and shows a friendly message if the list is empty.
+        -->
+        @if (Model != null && Model.Skills.Any())
+        {
+            <!-- Use a Bootstrap List Group for clean styling -->
+            <ul class="list-group">
+                @foreach (var skill in Model.Skills)
+                {
+                    <li class="list-group-item d-flex align-items-center">
+                        <!-- Add a nice-looking icon before the skill name -->
+                        <i class="bi bi-patch-check-fill text-primary me-3"></i>
+                        <span class="fw-medium">@skill</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <!-- This message is shown if the skills list is empty for any reason -->
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                There are currently no skills to display.
+            </div>
+        }
+    </div>
+    <div class="card-footer text-end">
+        <a asp-action="AddSkills" class="btn btn-success">
+            <i class="bi bi-pencil-square me-2"></i>Manage Your Skills
+        </a>
+    </div>
+</div>

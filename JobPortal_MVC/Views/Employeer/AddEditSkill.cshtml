@@ -1,0 +1,213 @@
+﻿@model JobPortalMVC.Models.SkillModel
+
+@{
+    ViewData["Title"] = "Add New Skill";
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+}
+
+<!-- Dependency for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+<style>
+    /* Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --add-skill-bg: #f4f7f6;
+        --add-skill-card-bg: #ffffff;
+        --add-skill-text: #2c3e50;
+        --add-skill-text-secondary: #34495e;
+        --add-skill-border: #ecf0f1;
+        --add-skill-input-border: #dadfe1;
+        --add-skill-input-bg: #ffffff;
+        --add-skill-input-focus: #3498db;
+        --add-skill-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        --add-skill-btn-secondary-bg: #f1f2f6;
+        --add-skill-btn-secondary-text: #34495e;
+        --add-skill-btn-secondary-border: #dadfe1;
+        --add-skill-btn-primary-bg: #3498db;
+        --add-skill-icon-color: #6c757d;
+        --add-skill-accent: #3498db;
+    }
+
+    [data-bs-theme="dark"] {
+        --add-skill-bg: #0f1521;
+        --add-skill-card-bg: #1a2234;
+        --add-skill-text: #e5e9f0;
+        --add-skill-text-secondary: #d1d5db;
+        --add-skill-border: #2a3245;
+        --add-skill-input-border: #374151;
+        --add-skill-input-bg: #1f2937;
+        --add-skill-input-focus: #6078ff;
+        --add-skill-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        --add-skill-btn-secondary-bg: #374151;
+        --add-skill-btn-secondary-text: #d1d5db;
+        --add-skill-btn-secondary-border: #4b5563;
+        --add-skill-btn-primary-bg: #6078ff;
+        --add-skill-icon-color: #9ca3af;
+        --add-skill-accent: #6078ff;
+    }
+
+    /* Adopt styles from your other pages for consistency */
+    .add-skill-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--add-skill-bg);
+        padding: 20px 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Page Header: Title + Button */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        max-width: 800px; /* Centered, slightly smaller than the job form */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .page-header h1 {
+        color: var(--add-skill-text);
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    /* The main card containing the form */
+    .form-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: var(--add-skill-card-bg);
+        border-radius: 8px;
+        box-shadow: var(--add-skill-shadow);
+        border-left: 5px solid var(--add-skill-accent); /* Signature blue accent */
+        padding: 30px 40px;
+        transition: all 0.3s ease;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--add-skill-text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    .form-control {
+        background-color: var(--add-skill-input-bg);
+        border: 1px solid var(--add-skill-input-border);
+        color: var(--add-skill-text);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background-color: var(--add-skill-input-bg);
+        border-color: var(--add-skill-input-focus);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        color: var(--add-skill-text);
+    }
+
+    .form-control::placeholder {
+        color: var(--add-skill-icon-color);
+    }
+
+    /* Style for input with icon */
+    .input-icon-group {
+        position: relative;
+    }
+
+    .input-icon-group .form-control {
+        padding-left: 2.5rem;
+    }
+
+    .input-icon-group .input-icon {
+        position: absolute;
+        top: 50%;
+        left: 0.9rem;
+        transform: translateY(-50%);
+        color: var(--add-skill-icon-color);
+        transition: color 0.3s ease;
+    }
+
+    .form-actions {
+        border-top: 1px solid var(--add-skill-border);
+        padding-top: 25px;
+        margin-top: 15px;
+        transition: border-color 0.3s ease;
+    }
+
+    .btn-secondary {
+        background-color: var(--add-skill-btn-secondary-bg);
+        color: var(--add-skill-btn-secondary-text);
+        border-color: var(--add-skill-btn-secondary-border);
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--add-skill-btn-secondary-border);
+        color: var(--add-skill-btn-secondary-text);
+    }
+
+    .btn-primary {
+        background-color: var(--add-skill-btn-primary-bg);
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--add-skill-input-focus);
+        color: white;
+    }
+
+    .alert-danger {
+        background-color: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+    }
+
+    [data-bs-theme="dark"] .alert-danger {
+        background-color: #431f20;
+        border-color: #7f1d1d;
+        color: #ef4444;
+    }
+
+    .text-danger {
+        color: #dc2626 !important;
+    }
+
+    [data-bs-theme="dark"] .text-danger {
+        color: #ef4444 !important;
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+</style>
+
+<div class="add-skill-page">
+    <div class="page-header">
+        <h1>Add New Skill</h1>
+        <a asp-controller="Employeer" asp-action="SkillsList" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Skills List
+        </a>
+    </div>
+
+    <!-- Main form container -->
+    <form asp-action="AddSkill" method="post" class="form-card">
+        @Html.AntiForgeryToken()
+        <!-- This will display model-level errors, like "Skill already exists" -->
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 text-center" role="alert"></div>
+
+        <div class="mb-4">
+            <label asp-for="SkillName" class="form-label">Skill Name</label>
+            <div class="input-icon-group">
+                <input asp-for="SkillName" class="form-control" />
+                <span class="input-icon">
+                    <i class="fa-solid fa-pencil"></i>
+                </span>
+            </div>
+            <span asp-validation-for="SkillName" class="text-danger"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Skill</button>
+        </div>
+    </form>
+</div>

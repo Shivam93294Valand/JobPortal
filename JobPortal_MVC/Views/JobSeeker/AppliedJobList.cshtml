@@ -1,0 +1,399 @@
+﻿@* @model IEnumerable<JobPortalMVC.Models.ApplicationModel>
+
+@{
+    ViewData["Title"] = "Job Applications";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml"; // Or your main layout
+}
+
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Received Applications</h4>
+        <!-- This link assumes you want a button to go to the apply form -->
+        <a asp-action="Apply" asp-route-jobId="1" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Apply to New Job
+        </a>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ApplicantName)</th>
+                            <th>@Html.DisplayNameFor(model => model.JobTitle)</th>
+                            <th>@Html.DisplayNameFor(model => model.Status)</th>
+                            <th>@Html.DisplayNameFor(model => model.AppliedAt)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-medium">@item.ApplicantName</td>
+                                <td>@item.JobTitle</td>
+                                <td>
+                                    @{
+                                        var statusClass = "bg-secondary";
+                                        if (item.Status == "Shortlisted") statusClass = "bg-warning text-dark";
+                                        else if (item.Status == "Hired") statusClass = "bg-success";
+                                        else if (item.Status == "Rejected") statusClass = "bg-danger";
+                                        else if (item.Status == "Applied") statusClass = "bg-primary";
+                                    }
+                                    <span class="badge @statusClass">@item.Status</span>
+                                </td>
+                                <td>@item.AppliedAt.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-outline-info">Details</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">No applications have been submitted yet.</div>
+        }
+    </div>
+</div>
+
+@{
+    ViewData["Title"] = "Job Applications";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Received Applications</h4>
+        <a asp-controller="Application" asp-action="Apply" asp-route-jobId="1" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Apply to New Job
+        </a>
+    </div>
+    <div class="card-body">
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+
+                <!-- THE TABLE HEADER IS NOW PLAIN TEXT -->
+                <thead>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Job Title</th>
+                        <th>Status</th>
+                        <th>Applied On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <!--
+                  THE TABLE BODY CONTAINS HARDCODED ROWS.
+                  There is no @@foreach loop.
+                -->
+                <tbody>
+
+                    <!-- Hardcoded Row 1: Shortlisted -->
+                <tr>
+                    <td class="fw-medium">Alice Smith</td>
+                    <td>Senior .NET Developer</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">Shortlisted</span>
+                    </td>
+                    <td>Nov 21, 2023</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-outline-info">Details</a>
+                    </td>
+                </tr>
+
+                <!-- Hardcoded Row 2: Applied -->
+                <tr>
+                    <td class="fw-medium">Bob Johnson</td>
+                    <td>Frontend React Engineer</td>
+                    <td>
+                        <span class="badge bg-primary">Applied</span>
+                    </td>
+                    <td>Nov 24, 2023</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-outline-info">Details</a>
+                    </td>
+                </tr>
+
+                <!-- Hardcoded Row 3: Hired -->
+                <tr>
+                    <td class="fw-medium">Diana Prince</td>
+                    <td>Azure DevOps Specialist</td>
+                    <td>
+                        <span class="badge bg-success">Hired</span>
+                    </td>
+                    <td>Oct 30, 2023</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-outline-info">Details</a>
+                    </td>
+                </tr>
+
+                <!-- Hardcoded Row 4: Rejected -->
+                <tr>
+                    <td class="fw-medium">Charlie Brown</td>
+                    <td>Senior .NET Developer</td>
+                    <td>
+                        <span class="badge bg-danger">Rejected</span>
+                    </td>
+                    <td>Nov 15, 2023</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-outline-info">Details</a>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div> *@
+
+@{
+    ViewData["Title"] = "My Applied Jobs";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<style>
+    /* Shared styles for the page and job cards */
+    .applied-jobs-page {
+        background-color: #f4f7f6;
+        padding: 20px 30px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+        .page-header h1 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+    .job-list-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .job-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        padding: 25px;
+        border-left: 5px solid; /* Border color will be set by status */
+    }
+
+    .job-card-header h2 {
+        font-size: 1.4rem;
+        color: #2c3e50;
+        margin: 0 0 5px 0;
+    }
+
+    .job-card-header .company-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #7f8c8d;
+    }
+
+    .job-card-description {
+        margin: 15px 0;
+        color: #566573;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Application specific info styles */
+    .job-card-application-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        margin-top: 15px;
+    }
+
+    .applied-on-date {
+        font-weight: 500;
+        color: #566573;
+    }
+
+    /* NEW: Application status badge styles */
+    .application-status {
+        padding: 6px 14px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-applied {
+        background-color: #eaf2ff;
+        color: #0d6efd;
+    }
+
+    .status-shortlisted {
+        background-color: #fff8e1;
+        color: #f59e0b;
+    }
+
+    .status-hired {
+        background-color: #e6f7ec;
+        color: #10b981;
+    }
+
+    .status-rejected {
+        background-color: #fee2e2;
+        color: #ef4444;
+    }
+
+    /* Adjusting card border and opacity based on status */
+    .job-card.applied {
+        border-left-color: #0d6efd;
+    }
+
+    .job-card.shortlisted {
+        border-left-color: #f59e0b;
+    }
+
+    .job-card.hired {
+        border-left-color: #10b981;
+    }
+
+    .job-card.rejected {
+        border-left-color: #ef4444;
+        opacity: 0.7;
+    }
+
+    .job-card-actions {
+        border-top: 1px solid #ecf0f1;
+        padding-top: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .btn-secondary {
+        background-color: #f1f2f6;
+        color: #34495e;
+    }
+
+        .btn-secondary:hover {
+            background-color: #e1e5e8;
+        }
+
+    .btn-danger {
+        color: #ef4444;
+    }
+
+        .btn-danger:hover {
+            background-color: #fee2e2;
+        }
+</style>
+
+<div class="applied-jobs-page">
+
+    <div class="page-header">
+        <h1>My Applied Jobs</h1>
+    </div>
+
+    <!-- ====== Job List Container (with hardcoded values) ====== -->
+    <div class="job-list-container">
+
+        <!-- ===== Hardcoded Job Card 1: Shortlisted ===== -->
+        <div class="job-card shortlisted">
+            <div class="job-card-header">
+                <h2>Senior .NET Developer</h2>
+                <span class="company-name">Tech Innovators LLC</span>
+            </div>
+            <p class="job-card-description">
+                You applied for this role to design, develop, and maintain high-quality web applications using C# and the .NET Core framework.
+            </p>
+            <div class="job-card-application-info">
+                <span class="applied-on-date">Applied On: Nov 15, 2023</span>
+                <div class="application-status status-shortlisted">Shortlisted</div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-secondary">Withdraw Application</a>
+                <a href="#" class="btn btn-secondary">View Original Posting</a>
+            </div>
+        </div>
+
+        <!-- ===== Hardcoded Job Card 2: Hired ===== -->
+        <div class="job-card hired">
+            <div class="job-card-header">
+                <h2>Cloud Solutions Architect</h2>
+                <span class="company-name">Nexus Cloud Services</span>
+            </div>
+            <p class="job-card-description">
+                Your application for the Architect role involved designing scalable cloud infrastructure and leading migration projects to Azure.
+            </p>
+            <div class="job-card-application-info">
+                <span class="applied-on-date">Applied On: Oct 20, 2023</span>
+                <div class="application-status status-hired">Hired</div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-secondary">View Offer Details</a>
+            </div>
+        </div>
+
+        <!-- ===== Hardcoded Job Card 3: Applied ===== -->
+        <div class="job-card applied">
+            <div class="job-card-header">
+                <h2>Frontend Engineer (React)</h2>
+                <span class="company-name">Creative Solutions Co.</span>
+            </div>
+            <p class="job-card-description">
+                Your application is currently being reviewed for the Frontend Engineer position to build user interfaces using React and TypeScript.
+            </p>
+            <div class="job-card-application-info">
+                <span class="applied-on-date">Applied On: Nov 28, 2023</span>
+                <div class="application-status status-applied">Application Sent</div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-danger">Withdraw Application</a>
+                <a href="#" class="btn btn-secondary">View Original Posting</a>
+            </div>
+        </div>
+
+        <!-- ===== Hardcoded Job Card 4: Rejected ===== -->
+        <div class="job-card rejected">
+            <div class="job-card-header">
+                <h2>Data Scientist</h2>
+                <span class="company-name">Data Insights Corp</span>
+            </div>
+            <p class="job-card-description">
+                You applied for the Data Scientist role. While your skills were impressive, the team decided to move forward with other candidates.
+            </p>
+            <div class="job-card-application-info">
+                <span class="applied-on-date">Applied On: Nov 05, 2023</span>
+                <div class="application-status status-rejected">Not Selected</div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-secondary">Archive</a>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,329 @@
+﻿@{
+    ViewData["Title"] = "My Job Postings";
+    // Assuming you have this layout file, otherwise, you can remove it.
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+}
+
+<style>
+    /* Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --jobs-bg: #f4f7f6;
+        --jobs-card-bg: #ffffff;
+        --jobs-text: #2c3e50;
+        --jobs-text-secondary: #34495e;
+        --jobs-text-muted: #7f8c8d;
+        --jobs-border: #ecf0f1;
+        --jobs-border-accent: #3498db;
+        --jobs-border-inactive: #95a5a6;
+        --jobs-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        --jobs-shadow-hover: 0 6px 15px rgba(0,0,0,0.12);
+        --jobs-btn-primary: #3498db;
+        --jobs-btn-primary-hover: #2980b9;
+        --jobs-btn-secondary: #f1f2f6;
+        --jobs-btn-secondary-text: #34495e;
+        --jobs-btn-secondary-border: #dadfe1;
+        --jobs-btn-secondary-hover: #e1e5e8;
+        --jobs-btn-danger: #e74c3c;
+        --jobs-btn-danger-hover: #fff0ef;
+        --jobs-status-active-bg: #eafaf1;
+        --jobs-status-active-text: #2ecc71;
+        --jobs-status-inactive-bg: #f1f2f6;
+        --jobs-status-inactive-text: #7f8c8d;
+        --jobs-icon-color: #34495e;
+    }
+
+    [data-bs-theme="dark"] {
+        --jobs-bg: #0f1521;
+        --jobs-card-bg: #1a2234;
+        --jobs-text: #e5e9f0;
+        --jobs-text-secondary: #9aa4bd;
+        --jobs-text-muted: #6b7280;
+        --jobs-border: #2a3245;
+        --jobs-border-accent: #6078ff;
+        --jobs-border-inactive: #4b5563;
+        --jobs-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        --jobs-shadow-hover: 0 6px 15px rgba(0,0,0,0.3);
+        --jobs-btn-primary: #6078ff;
+        --jobs-btn-primary-hover: #5983ff;
+        --jobs-btn-secondary: #374151;
+        --jobs-btn-secondary-text: #d1d5db;
+        --jobs-btn-secondary-border: #4b5563;
+        --jobs-btn-secondary-hover: #4b5563;
+        --jobs-btn-danger: #ef4444;
+        --jobs-btn-danger-hover: #431f20;
+        --jobs-status-active-bg: #1d4b2e;
+        --jobs-status-active-text: #4ade80;
+        --jobs-status-inactive-bg: #374151;
+        --jobs-status-inactive-text: #9ca3af;
+        --jobs-icon-color: #9aa4bd;
+    }
+
+    /* General Page Styles */
+    .job-list-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--jobs-bg);
+        padding: 20px 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Page Header: Title + Button */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap; /* Allows wrapping on smaller screens */
+        gap: 20px;
+    }
+
+    .page-header h1 {
+        color: var(--jobs-text);
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    /* Job Card Styles */
+    .job-list-container {
+        display: grid;
+        grid-template-columns: 1fr; /* 1 column by default */
+        gap: 20px;
+    }
+
+    .job-card {
+        background-color: var(--jobs-card-bg);
+        border-radius: 8px;
+        box-shadow: var(--jobs-shadow);
+        padding: 25px;
+        transition: all 0.3s ease;
+        border-left: 5px solid var(--jobs-border-accent); /* Blue accent border */
+    }
+
+    .job-card.inactive {
+        border-left-color: var(--jobs-border-inactive); /* Gray accent for inactive jobs */
+        opacity: 0.75;
+    }
+
+    .job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--jobs-shadow-hover);
+    }
+
+    .job-card-header {
+        margin-bottom: 15px;
+    }
+
+    .job-card-header h2 {
+        font-size: 1.4rem;
+        color: var(--jobs-text);
+        margin: 0 0 5px 0;
+        transition: color 0.3s ease;
+    }
+
+    .job-card-header .company-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--jobs-text-muted);
+        transition: color 0.3s ease;
+    }
+
+    .job-card-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px 25px; /* Row and column gap */
+        color: var(--jobs-text-secondary);
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .detail-item svg {
+        margin-right: 8px;
+        width: 16px;
+        height: 16px;
+        fill: var(--jobs-icon-color);
+        transition: fill 0.3s ease;
+    }
+
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .status-active {
+        background-color: var(--jobs-status-active-bg);
+        color: var(--jobs-status-active-text);
+    }
+
+    .status-inactive {
+        background-color: var(--jobs-status-inactive-bg);
+        color: var(--jobs-status-inactive-text);
+    }
+
+    .job-card-actions {
+        border-top: 1px solid var(--jobs-border);
+        padding-top: 15px;
+        display: flex;
+        gap: 10px;
+        transition: border-color 0.3s ease;
+    }
+
+    /* Shared Button Styles */
+    .btn {
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: var(--jobs-btn-primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--jobs-btn-primary-hover);
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: var(--jobs-btn-secondary);
+        color: var(--jobs-btn-secondary-text);
+        border-color: var(--jobs-btn-secondary-border);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--jobs-btn-secondary-hover);
+        color: var(--jobs-btn-secondary-text);
+    }
+
+    .btn-danger {
+        background-color: transparent;
+        color: var(--jobs-btn-danger);
+    }
+
+    .btn-danger:hover {
+        background-color: var(--jobs-btn-danger-hover);
+        border-color: var(--jobs-btn-danger);
+        color: var(--jobs-btn-danger);
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease;
+    }
+</style>
+
+<div class="job-list-page">
+    <div class="page-header">
+        <h1>My Job Postings</h1>
+        <a asp-action="AddJob" asp-controller="Employeer" class="btn btn-primary">Post a New Job</a>
+    </div>
+
+    <div class="job-list-container">
+
+        <!-- ===== Hardcoded Job Card 1: Active ===== -->
+        <div class="job-card">
+            <div class="job-card-header">
+                <h2>Senior Full-Stack Developer</h2>
+                <span class="company-name">Innovate Corp.</span>
+            </div>
+            <div class="job-card-details">
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path></svg>
+                    <span>New York, NY</span>
+                </div>
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"></path></svg>
+                    <span>Full-Time</span>
+                </div>
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5z"></path></svg>
+                    <span>Posted: Oct 26, 2023</span>
+                </div>
+                <div class="detail-item">
+                    <span class="status-badge status-active">Active</span>
+                </div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-secondary">View Applicants (5)</a>
+                <a href="#" class="btn btn-secondary">Edit</a>
+                <a href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+
+        <!-- ===== Hardcoded Job Card 2: Active (Remote) ===== -->
+        <div class="job-card">
+            <div class="job-card-header">
+                <h2>UX/UI Designer</h2>
+                <span class="company-name">Creative Minds Inc.</span>
+            </div>
+            <div class="job-card-details">
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path></svg>
+                    <span>Remote</span>
+                </div>
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"></path></svg>
+                    <span>Contract</span>
+                </div>
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5z"></path></svg>
+                    <span>Posted: Oct 21, 2023</span>
+                </div>
+                <div class="detail-item">
+                    <span class="status-badge status-active">Active</span>
+                </div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-secondary">View Applicants (12)</a>
+                <a href="#" class="btn btn-secondary">Edit</a>
+                <a href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+
+        <!-- ===== Hardcoded Job Card 3: Inactive ===== -->
+        <div class="job-card inactive">
+            <div class="job-card-header">
+                <h2>Digital Marketing Manager</h2>
+                <span class="company-name">Data Solutions Ltd.</span>
+            </div>
+            <div class="job-card-details">
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path></svg>
+                    <span>London, UK</span>
+                </div>
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"></path></svg>
+                    <span>Full-Time</span>
+                </div>
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5z"></path></svg>
+                    <span>Posted: Aug 15, 2023</span>
+                </div>
+                <div class="detail-item">
+                    <span class="status-badge status-inactive">Expired</span>
+                </div>
+            </div>
+            <div class="job-card-actions">
+                <a href="#" class="btn btn-secondary">View Applicants (25)</a>
+                <a href="#" class="btn btn-secondary">Re-post Job</a>
+                <a href="#" class="btn btn-danger">Archive</a>
+            </div>
+        </div>
+
+    </div>
+</div>

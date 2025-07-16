@@ -1,0 +1,129 @@
+﻿@model object // No specific model is needed for this hardcoded version
+
+@{
+    ViewData["Title"] = "Write a Review";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<style>
+    /* UI is consistent with other pages, using theme variables */
+    .content-card {
+        max-width: 800px;
+        margin: 0 auto; /* Center the card on the page */
+        background-color: var(--theme-bg-surface-1);
+        border: 1px solid var(--theme-border-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        padding: 30px;
+    }
+
+    .form-header h2 {
+        color: var(--theme-text-primary);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+        color: var(--theme-text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--theme-text-primary);
+        margin-bottom: 0.75rem;
+    }
+
+    /* --- Interactive Star Rating --- */
+    .star-rating-input {
+        display: flex;
+        flex-direction: row-reverse; /* Allows for the cool :hover effect */
+        justify-content: flex-end;
+        font-size: 2rem;
+    }
+
+        .star-rating-input input {
+            display: none; /* Hide the actual radio buttons */
+        }
+
+        .star-rating-input label {
+            color: #d1d5db; /* Default empty star color */
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        /* When hovering over a star, color it AND all previous stars */
+        .star-rating-input:not(:hover) input:checked ~ label,
+        .star-rating-input:hover input:hover ~ label {
+            color: #f59e0b; /* Amber/gold for hover and selection */
+        }
+
+        .star-rating-input input:checked + label:hover,
+        .star-rating-input input:checked ~ label:hover,
+        .star-rating-input input:checked ~ label:hover ~ label,
+        .star-rating-input:hover input:checked ~ label {
+            color: #f59e0b;
+        }
+
+    .form-actions {
+        border-top: 1px solid var(--theme-border-color);
+        padding-top: 25px;
+        margin-top: 30px;
+    }
+
+    .btn-primary {
+        background-color: var(--theme-text-brand);
+        color: var(--theme-bg-surface-1);
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: var(--theme-bg-surface-2);
+        color: var(--theme-text-secondary);
+        border: 1px solid var(--theme-border-color);
+    }
+</style>
+
+<div class="content-card">
+
+    <div class="form-header">
+        <h2>Write Your Review</h2>
+        <p>Your review for <strong>Tech Innovators LLC</strong></p>
+    </div>
+
+    <hr class="my-4" style="border-color: var(--theme-border-color);">
+
+    <form asp-action="AddReview" method="post">
+
+        <!-- Add any model-level validation summary here if needed -->
+        <!-- <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div> -->
+        <!-- Hidden inputs for data that isn't entered by the user -->
+        <input type="hidden" name="CompanyId" value="101" /> <!-- Example hardcoded CompanyId -->
+        <!-- RATING FIELD -->
+        <div class="mb-4">
+            <label class="form-label d-block">Overall Rating</label>
+            <!--
+                This uses radio buttons for accessibility and form submission,
+                but they are hidden and styled as stars with CSS.
+            -->
+            <div class="star-rating-input">
+                <input type="radio" id="star5" name="Rating" value="5" /><label for="star5" title="5 stars">★</label>
+                <input type="radio" id="star4" name="Rating" value="4" /><label for="star4" title="4 stars">★</label>
+                <input type="radio" id="star3" name="Rating" value="3" /><label for="star3" title="3 stars">★</label>
+                <input type="radio" id="star2" name="Rating" value="2" /><label for="star2" title="2 stars">★</label>
+                <input type="radio" id="star1" name="Rating" value="1" /><label for="star1" title="1 star">★</label>
+            </div>
+        </div>
+
+        <!-- COMMENT FIELD -->
+        <div class="mb-3">
+            <label for="comment" class="form-label">Your Comment</label>
+            <textarea id="comment" name="Comment" class="form-control" rows="6" placeholder="Share details of your experience..."></textarea>
+        </div>
+
+        <!-- FORM ACTIONS -->
+        <div class="form-actions d-flex justify-content-end gap-2">
+            <a asp-action="CompanyReviewsList" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane me-2"></i>Submit Review</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,231 @@
+﻿@model JobPortalMVC.Models.JobCatagoryModel
+
+@{
+    ViewData["Title"] = ViewData["Title"];
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+    var isEditMode = Model.CategoryId != 0;
+}
+
+<!-- Dependency for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+<style>
+    /* Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --add-category-bg: #f4f7f6;
+        --add-category-card-bg: #ffffff;
+        --add-category-text: #2c3e50;
+        --add-category-text-secondary: #34495e;
+        --add-category-border: #ecf0f1;
+        --add-category-input-border: #dadfe1;
+        --add-category-input-bg: #ffffff;
+        --add-category-input-focus: #3498db;
+        --add-category-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        --add-category-btn-secondary-bg: #f1f2f6;
+        --add-category-btn-secondary-text: #34495e;
+        --add-category-btn-secondary-border: #dadfe1;
+        --add-category-btn-primary-bg: #3498db;
+        --add-category-icon-color: #6c757d;
+        --add-category-accent: #3498db;
+    }
+
+    [data-bs-theme="dark"] {
+        --add-category-bg: #0f1521;
+        --add-category-card-bg: #1a2234;
+        --add-category-text: #e5e9f0;
+        --add-category-text-secondary: #d1d5db;
+        --add-category-border: #2a3245;
+        --add-category-input-border: #374151;
+        --add-category-input-bg: #1f2937;
+        --add-category-input-focus: #6078ff;
+        --add-category-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        --add-category-btn-secondary-bg: #374151;
+        --add-category-btn-secondary-text: #d1d5db;
+        --add-category-btn-secondary-border: #4b5563;
+        --add-category-btn-primary-bg: #6078ff;
+        --add-category-icon-color: #9ca3af;
+        --add-category-accent: #6078ff;
+    }
+
+    /* Adopt styles from other pages for consistency */
+    .add-category-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--add-category-bg);
+        padding: 20px 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Page Header: Title + Button */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        max-width: 800px; /* Centered content area */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .page-header h1 {
+        color: var(--add-category-text);
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    /* The main card containing the form */
+    .form-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: var(--add-category-card-bg);
+        border-radius: 8px;
+        box-shadow: var(--add-category-shadow);
+        border-left: 5px solid var(--add-category-accent); /* Signature blue accent */
+        padding: 30px 40px;
+        transition: all 0.3s ease;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--add-category-text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    .form-control {
+        background-color: var(--add-category-input-bg);
+        border: 1px solid var(--add-category-input-border);
+        color: var(--add-category-text);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background-color: var(--add-category-input-bg);
+        border-color: var(--add-category-input-focus);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        color: var(--add-category-text);
+    }
+
+    .form-control::placeholder {
+        color: var(--add-category-icon-color);
+    }
+
+    /* Style for input with icon */
+    .input-icon-group {
+        position: relative;
+    }
+
+    .input-icon-group .form-control {
+        padding-left: 2.5rem;
+    }
+
+    .input-icon-group .input-icon {
+        position: absolute;
+        top: 50%;
+        left: 0.9rem;
+        transform: translateY(-50%);
+        color: var(--add-category-icon-color);
+        transition: color 0.3s ease;
+    }
+
+    .form-actions {
+        border-top: 1px solid var(--add-category-border);
+        padding-top: 25px;
+        margin-top: 15px;
+        transition: border-color 0.3s ease;
+    }
+
+    .btn-secondary {
+        background-color: var(--add-category-btn-secondary-bg);
+        color: var(--add-category-btn-secondary-text);
+        border-color: var(--add-category-btn-secondary-border);
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--add-category-btn-secondary-border);
+        color: var(--add-category-btn-secondary-text);
+    }
+
+    .btn-primary {
+        background-color: var(--add-category-btn-primary-bg);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--add-category-input-focus);
+        color: white;
+    }
+
+    .alert-danger {
+        background-color: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+    }
+
+    [data-bs-theme="dark"] .alert-danger {
+        background-color: #431f20;
+        border-color: #7f1d1d;
+        color: #ef4444;
+    }
+
+    .text-danger {
+        color: #dc2626 !important;
+    }
+
+    [data-bs-theme="dark"] .text-danger {
+        color: #ef4444 !important;
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+</style>
+
+<div class="add-category-page">
+    <div class="page-header">
+        <h1>@ViewData["Title"]</h1>
+        <a asp-controller="Employeer" asp-action="CategoryList" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Categories
+        </a>
+    </div>
+
+    <!-- The form now points to our new combined action -->
+    <form asp-action="AddEditCategory" method="post" class="form-card">
+        @Html.AntiForgeryToken()
+
+        <!-- CRITICAL: Hidden field to track if this is an Add or Edit operation -->
+        <input type="hidden" asp-for="CategoryId" />
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 text-center" role="alert"></div>
+
+        <div class="mb-4">
+            <label asp-for="CategoryName" class="form-label"></label>
+            <div class="input-icon-group">
+                <i class="fa-solid fa-folder-open input-icon"></i>
+                <input asp-for="CategoryName" class="form-control" placeholder="e.g., Information Technology, Marketing" />
+            </div>
+            <span asp-validation-for="CategoryName" class="text-danger small mt-1"></span>
+        </div>
+
+        <!-- Dynamic Form Actions -->
+        <div class="form-actions d-flex justify-content-end gap-2">
+            <a asp-controller="Employeer" asp-action="CategoryList" class="btn btn-secondary">Cancel</a>
+            @if (isEditMode)
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i>Save Changes</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Create Category</button>
+            }
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

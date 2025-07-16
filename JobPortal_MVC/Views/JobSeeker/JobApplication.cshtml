@@ -1,0 +1,61 @@
+﻿@model JobPortalMVC.Models.JobApplicationModel;
+
+@{
+    ViewData["Title"] = "Apply for Job";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+        <!-- This form still uses tag helpers for clean URL generation and anti-forgery, but not for data binding. -->
+        <form asp-controller="Application" asp-action="Apply" method="post" enctype="multipart/form-data">
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <!-- The title is now hardcoded since we have no @Model -->
+                    <h4 class="mb-0">Apply for: Senior .NET Developer</h4>
+                </div>
+                <div class="card-body">
+
+                    <!-- These hidden fields send hardcoded data. -->
+                    <!-- The 'name' attribute is what links this to the controller action parameter. -->
+                    <input type="hidden" name="jobId" value="1" />
+                    <input type="hidden" name="userId" value="101" />
+
+                    <!-- This is how you would display a validation message from TempData -->
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <div class="mb-3">
+                        <label for="applicantName" class="form-label">Applicant</label>
+                        <!-- A standard input with a hardcoded value. No asp-for. -->
+                        <input type="text" id="applicantName" name="applicantName" class="form-control" value="Alice Smith" disabled />
+                        <div class="form-text">This is the currently logged-in user (hardcoded for this demo).</div>
+                    </div>
+
+                    <hr />
+
+                    <div class="mb-4">
+                        <label for="resumeFile" class="form-label">Resume (PDF only)</label>
+                        <!-- A standard file input. The 'name' MUST be "resumeFile" to match the controller. -->
+                        <input name="resumeFile" id="resumeFile" class="form-control form-control-lg" type="file" accept=".pdf" />
+                        <!-- No validation span because there's no model. -->
+                        <div class="form-text">Please upload your resume in PDF format. Max file size: 5MB.</div>
+                    </div>
+
+                    <div class="alert alert-light border">
+                        <p class="mb-0">By clicking "Submit Application", you agree to our terms and conditions.</p>
+                    </div>
+
+                </div>
+                <div class="card-footer text-end">
+                    <a asp-controller="JobSeeker" asp-action="Dashboard" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-success">Submit Application</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

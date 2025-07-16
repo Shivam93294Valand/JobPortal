@@ -1,0 +1,141 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = JobPortalMVC
+build_property.RootNamespace = JobPortalMVC
+build_property.ProjectDir = D:\My Programs\Sem 5\Adv_Net\extra\JobPortalMVC\JobPortalMVC\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\My Programs\Sem 5\Adv_Net\extra\JobPortalMVC\JobPortalMVC
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/AddEditCategory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXEFkZEVkaXRDYXRlZ29yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/AddEditCompany.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXEFkZEVkaXRDb21wYW55LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/AddEditSkill.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXEFkZEVkaXRTa2lsbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/AddJob.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXEFkZEpvYi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/ApplicantsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXEFwcGxpY2FudHNMaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/CategoryList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXENhdGVnb3J5TGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/CompaniesList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXENvbXBhbmllc0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/JobsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXEpvYnNMaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Employeer/SkillsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVyXFNraWxsc0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/AddCompanyReview.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXEFkZENvbXBhbnlSZXZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/AddSkills.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXEFkZFNraWxscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/AppliedJobList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXEFwcGxpZWRKb2JMaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/CompanyReviewsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXENvbXBhbnlSZXZpZXdzTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/JobApplication.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXEpvYkFwcGxpY2F0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/JobApplicationsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXEpvYkFwcGxpY2F0aW9uc0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/JobDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXEpvYkRldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/SavedJobsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXFNhdmVkSm9ic0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/JobSeeker/SkillsList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iU2Vla2VyXFNraWxsc0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Login/LoginForm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cTG9naW5Gb3JtLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Registration/RegistrationForm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0cmF0aW9uXFJlZ2lzdHJhdGlvbkZvcm0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Shared/_EmployeerLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9FbXBsb3llZXJMYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Shared/_JobSeekerLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Kb2JTZWVrZXJMYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Shared/_LoginLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/My Programs/Sem 5/Adv_Net/extra/JobPortalMVC/JobPortalMVC/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-oq72neek70
