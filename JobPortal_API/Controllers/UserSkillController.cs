@@ -19,7 +19,7 @@ namespace JobPortalAPI.Controllers
 
         #region GetAll UserSkills
         [HttpGet("GetAllUserSkills")]
-        public async Task <ActionResult<List<UserSkill>>> GetAllUserSkills()
+        public async Task<ActionResult<List<UserSkill>>> GetAllUserSkills()
         {
             var userSkills = await _context.UserSkills.ToListAsync();
             return Ok(userSkills);
@@ -28,16 +28,33 @@ namespace JobPortalAPI.Controllers
 
         #region Add UserSkill
         [HttpPost("AddUserSkill")]
-        public async Task <ActionResult<UserSkill>> AddUserSkill([FromBody] UserSkill userSkill)
+        public async Task<ActionResult<UserSkill>> AddUserSkill([FromBody] UserSkill userSkill)
         {
-            await _context.UserSkills.AddAsync(userSkill);
-            _context.SaveChanges();
-            return Ok(userSkill);
+            try
+            {
+                // Check if the user-skill combination already exists
+                var existingUserSkill = await _context.UserSkills
+                    .FirstOrDefaultAsync(us => us.UserId == userSkill.UserId && us.SkillId == userSkill.SkillId);
+
+                if (existingUserSkill != null)
+                {
+                    return Conflict("User already has this skill.");
+                }
+
+                userSkill.CreatedAt = DateTime.UtcNow;
+                await _context.UserSkills.AddAsync(userSkill);
+                await _context.SaveChangesAsync();
+                return Ok(userSkill);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error adding user skill: {ex.Message}");
+            }
         }
         #endregion
 
         #region Update UserSkill By ID
-        [HttpPut("UpdateUserSkill/{id}")] 
+        [HttpPut("UpdateUserSkill/{id}")]
         public async Task<ActionResult<UserSkill>> UpdateUserSkill(int id, [FromBody] UserSkill userSkill)
         {
             if (id == null)
@@ -50,18 +67,37 @@ namespace JobPortalAPI.Controllers
         }
         #endregion
 
-        #region Delete UserSkill By ID
-        [HttpDelete("DeleteUserSkill/{id}")] 
-        public async Task<ActionResult<UserSkill>> DeleteUserSkill(int id)
+        //#region Delete UserSkill By ID
+        //[HttpDelete("DeleteUserSkill/{id}")]
+        //public async Task<ActionResult<UserSkill>> DeleteUserSkill(int id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var userSkill = await _context.UserSkills.FindAsync(id);
+        //    _context.UserSkills.Remove(userSkill);
+        //    await _context.SaveChangesAsync();
+        //    return Ok(userSkill);
+        //}
+        //#endregion
+
+        #region Delete UserSkill by UserId and SkillId
+        [HttpDelete("DeleteUserSkill/{userId}/{skillId}")]
+        public async Task<IActionResult> DeleteUserSkill(int userId, int skillId)
         {
-            if (id == null)
+            var userSkill = await _context.UserSkills
+                .FirstOrDefaultAsync(us => us.UserId == userId && us.SkillId == skillId);
+
+            if (userSkill == null)
             {
-                return NotFound();
+                return NotFound("The specified user skill was not found.");
             }
-            var userSkill = await _context.UserSkills.FindAsync(id);
+
             _context.UserSkills.Remove(userSkill);
             await _context.SaveChangesAsync();
-            return Ok(userSkill);
+
+            return NoContent();
         }
         #endregion
     }

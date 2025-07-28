@@ -42,10 +42,38 @@ namespace JobPortalAPI.Controllers
         [HttpPost("AddSkill")]
         public async Task<ActionResult<Skill>> AddSkill([FromBody] Skill skill)
         {
-            skill.CreatedAt = DateTime.UtcNow;
-            await _context.Skills.AddAsync(skill);
-            await _context.SaveChangesAsync();
-            return Ok(skill);
+            try
+            {
+                if (skill == null)
+                {
+                    return BadRequest("Skill data is required.");
+                }
+                
+                if (string.IsNullOrEmpty(skill.SkillName))
+                {
+                    return BadRequest("Skill name is required.");
+                }
+                
+                // Check if skill with same name already exists
+                var existingSkill = await _context.Skills.FirstOrDefaultAsync(s => s.SkillName == skill.SkillName);
+                if (existingSkill != null)
+                {
+                    return Conflict($"Skill with name '{skill.SkillName}' already exists.");
+                }
+                
+                var now = DateTime.UtcNow;
+                skill.CreatedAt = now;
+                skill.UpdatedAt = now;
+                
+                await _context.Skills.AddAsync(skill);
+                await _context.SaveChangesAsync();
+                
+                return CreatedAtAction(nameof(GetSkill), new { id = skill.SkillId }, skill);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error adding skill: {ex.Message}");
+            }
         }
         #endregion
 
@@ -114,11 +142,15 @@ namespace JobPortalAPI.Controllers
         [HttpGet("GetSkillByName/{name}")]
         public async Task<ActionResult<Skill>> GetSkillByName(string name)
         {
-            if (name == null)
+            if (string.IsNullOrEmpty(name))
             {
-                return NotFound();
+                return BadRequest("Skill name cannot be null or empty.");
             }
             var skill = await _context.Skills.FirstOrDefaultAsync(s => s.SkillName == name);
+            if (skill == null)
+            {
+                return NotFound($"Skill with name '{name}' not found.");
+            }
             return Ok(skill);
         }
         #endregion

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobPortalAPI.Models;
-
 public partial class JobPortalDbContext : DbContext
 {
     public JobPortalDbContext()
