@@ -1,46 +1,294 @@
-﻿@model JobPortalMVC.Models.SkillsListModel
+@model JobPortalMVC.Models.SkillsListViewModel
 
 @{
-    ViewData["Title"] = "Skills List";
+    ViewData["Title"] = "My Skills";
     Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
 }
 
+<style>
+    .theme-transitioning {
+        box-shadow: 0 0 20px rgba(67, 97, 238, 0.3) !important;
+    }
+
+    .list-group-item {
+        transition: all 0.2s ease-in-out;
+        border-color: var(--theme-border-color) !important;
+        background-color: var(--theme-card-bg) !important;
+        color: var(--theme-text-primary) !important;
+    }
+
+        .list-group-item:hover {
+            background-color: var(--theme-brand-accent-bg) !important;
+            border-color: var(--theme-text-brand) !important;
+        }
+
+    .card {
+        background-color: var(--theme-card-bg) !important;
+        border-color: var(--theme-card-border) !important;
+        box-shadow: var(--theme-card-shadow) !important;
+    }
+
+    .card-header {
+        background-color: var(--theme-bg-surface-2) !important;
+        border-color: var(--theme-border-color) !important;
+        color: var(--theme-text-primary) !important;
+    }
+
+    .card-footer {
+        background-color: var(--theme-bg-surface-2) !important;
+        border-color: var(--theme-border-color) !important;
+    }
+
+    .alert-info {
+        background-color: var(--theme-brand-accent-bg) !important;
+        border-color: var(--theme-text-brand) !important;
+        color: var(--theme-text-primary) !important;
+    }
+
+    .text-primary {
+        color: var(--theme-text-brand) !important;
+    }
+
+    .btn-success {
+        background: var(--theme-brand-gradient) !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+    }
+
+        .btn-success:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3) !important;
+        }
+
+    .refresh-success {
+        animation: refresh-pulse 1s ease-in-out;
+    }
+
+    @@keyframes refresh-pulse {
+        0% {
+            box-shadow: var(--theme-card-shadow);
+        }
+
+        50% {
+            box-shadow: 0 0 25px rgba(40, 167, 69, 0.4);
+        }
+
+        100% {
+            box-shadow: var(--theme-card-shadow);
+        }
+    }
+
+    .badge {
+        transition: all 0.3s ease !important;
+    }
+
+    .spinner-border {
+        color: var(--theme-text-brand) !important;
+    }
+
+    .btn-outline-primary {
+        border-color: var(--theme-text-brand) !important;
+        color: var(--theme-text-brand) !important;
+        transition: all 0.3s ease !important;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: var(--theme-text-brand) !important;
+            border-color: var(--theme-text-brand) !important;
+        }
+
+        .btn-outline-primary:disabled {
+            opacity: 0.6;
+        }
+        
+        /* Fix for text color on hover */
+        .btn-outline-primary:hover {
+            color: #fff !important; /* Force white text on hover */
+        }
+        
+        .edit-skill-btn:hover {
+            color: #fff !important; /* Ensure text is white on hover */
+        }
+</style>
+
 <div class="card shadow-sm">
-    <div class="card-header">
-        <h4 class="mb-0">Master Skills List</h4>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Your Skills List</h4>
+        <div class="d-flex align-items-center">
+            <span class="badge bg-primary me-2" id="skills-count">@(Model?.Skills?.Count ?? 0) Skills</span>
+        </div>
     </div>
     <div class="card-body">
-
-        <!--
-            Check if the model and the Skills list exist and have items.
-            This prevents errors and shows a friendly message if the list is empty.
-        -->
-        @if (Model != null && Model.Skills.Any())
-        {
-            <!-- Use a Bootstrap List Group for clean styling -->
-            <ul class="list-group">
-                @foreach (var skill in Model.Skills)
-                {
-                    <li class="list-group-item d-flex align-items-center">
-                        <!-- Add a nice-looking icon before the skill name -->
-                        <i class="bi bi-patch-check-fill text-primary me-3"></i>
-                        <span class="fw-medium">@skill</span>
-                    </li>
-                }
-            </ul>
-        }
-        else
-        {
-            <!-- This message is shown if the skills list is empty for any reason -->
-            <div class="alert alert-info" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                There are currently no skills to display.
-            </div>
-        }
+        <!-- Skills content -->
+        <div id="skills-content">
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                    @ViewBag.ErrorMessage
+                </div>
+            }
+            else if (Model != null && Model.Skills.Any())
+            {
+                <!-- Use a Bootstrap List Group for clean styling -->
+                <ul class="list-group">
+                    @foreach (var skill in Model.Skills)
+                    {
+                        <li class="list-group-item d-flex align-items-center justify-content-between" data-skill-id="@skill.SkillId" data-skill-name="@skill.SkillName">
+                            <div class="d-flex align-items-center flex-grow-1">
+                                <!-- Add a nice-looking icon before the skill name -->
+                                <i class="fa-solid fa-code text-primary me-3"></i>
+                                <span class="fw-medium skill-name">@skill.SkillName</span>
+                            </div>
+                            <div>
+                                <a asp-controller="JobSeeker" asp-action="EditSkill" asp-route-id="@skill.SkillId" class="btn btn-sm btn-outline-primary me-2 edit-skill-btn">
+                                    <i class="fa-solid fa-pencil"></i> Edit
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger delete-skill-btn" data-skill-id="@skill.SkillId" data-skill-name="@skill.SkillName">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <!-- This message is shown if the skills list is empty for any reason -->
+                <div class="alert alert-info" role="alert">
+                    <i class="fa-solid fa-info-circle me-2"></i>
+                    You have not added any skills yet.
+                    <ul class="mt-2 mb-0">
+                        <li>Click the 'Add Your Skills' button to add some.</li>
+                    </ul>
+                </div>
+            }
+        </div>
     </div>
-    <div class="card-footer text-end">
-        <a asp-action="AddSkills" class="btn btn-success">
-            <i class="bi bi-pencil-square me-2"></i>Manage Your Skills
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <a asp-action="AddEditSkills" class="btn btn-success">
+            <i class="fa-solid fa-plus me-2"></i>Add Your Skills
         </a>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillsList = document.querySelector('.list-group');
+            if (skillsList) {
+                skillsList.style.opacity = '0.8';
+
+                setTimeout(function() {
+                    skillsList.style.transition = 'opacity 0.5s ease-in-out';
+                    skillsList.style.opacity = '1';
+                }, 100);
+
+                // Add hover effects to skill items
+                const skillItems = document.querySelectorAll('.list-group-item');
+                skillItems.forEach(function(item) {
+                    item.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateX(10px)';
+                        this.style.transition = 'transform 0.2s ease-in-out';
+                    });
+
+                    item.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateX(0)';
+                    });
+                });
+            }
+
+            // Handle delete button clicks
+            const deleteButtons = document.querySelectorAll('.delete-skill-btn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const skillId = this.getAttribute('data-skill-id');
+                    const skillName = this.getAttribute('data-skill-name');
+                    
+                    if (confirm(`Are you sure you want to delete the skill "${skillName}"?`)) {
+                        try {
+                            // Show loading state
+                            this.disabled = true;
+                            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                            
+                            const response = await fetch(`/JobSeeker/DeleteUserSkill?skillId=${skillId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                const result = await response.json();
+                                if (result.success) {
+                                    // Remove the list item with animation
+                                    const listItem = this.closest('.list-group-item');
+                                    listItem.style.transition = 'all 0.3s ease-out';
+                                    listItem.style.transform = 'translateX(100%)';
+                                    listItem.style.opacity = '0';
+                                    
+                                    setTimeout(() => {
+                                        listItem.remove();
+                                        
+                                        // Update the skills count
+                                        const skillsCount = document.getElementById('skills-count');
+                                        const currentCount = parseInt(skillsCount.textContent);
+                                        skillsCount.textContent = `${currentCount - 1} Skills`;
+                                        
+                                        // Show empty message if no skills left
+                                        if (document.querySelectorAll('.list-group-item').length === 0) {
+                                            const skillsContent = document.getElementById('skills-content');
+                                            skillsContent.innerHTML = `
+                                                <div class="alert alert-info" role="alert">
+                                                    <i class="fa-solid fa-info-circle me-2"></i>
+                                                    You have not added any skills yet.
+                                                    <ul class="mt-2 mb-0">
+                                                        <li>Click the 'Add Your Skills' button to add some.</li>
+                                                    </ul>
+                                                </div>
+                                            `;
+                                        }
+                                    }, 300);
+                                } else {
+                                    alert('Failed to delete the skill.');
+                                    this.disabled = false;
+                                    this.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+                                }
+                            } else {
+                                const errorText = await response.text();
+                                throw new Error(errorText || 'Server error');
+                            }
+                        } catch (error) {
+                            console.error('Error deleting skill:', error);
+                            alert(`Error: ${error.message}`);
+                            this.disabled = false;
+                            this.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+                        }
+                    }
+                });
+            });
+
+            // Theme-specific animations
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+                        const card = document.querySelector('.card');
+                        if (card) {
+                            card.style.transition = 'all 0.3s ease-in-out';
+                            card.classList.add('theme-transitioning');
+
+                            setTimeout(function() {
+                                card.classList.remove('theme-transitioning');
+                            }, 300);
+                        }
+                    }
+                });
+            });
+
+            observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['data-bs-theme']
+            });
+        });
+    </script>
+}

@@ -1,5 +1,6 @@
 ﻿using JobPortalMVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -7,12 +8,14 @@ namespace JobPortalMVC.Controllers
 {
     public class EmployeerController : Controller
     {
+        #region Constructor
         private readonly HttpClient _client;
         public EmployeerController(IHttpClientFactory httpclientFactory)
         {
             _client = httpclientFactory.CreateClient("JobPortalAPI");
             _client.BaseAddress = new Uri("https://localhost:7172/api/");
         }
+        #endregion
 
         #region Dashboard
         [Route("/Employeer")]
@@ -51,7 +54,7 @@ namespace JobPortalMVC.Controllers
                 ViewData["Title"] = "Create Company Profile";
                 return View(new CompanyModel());
             }
-            else // "Edit" mode: an id is provided
+            else 
             {
                 ViewData["Title"] = "Edit Company Profile";
 
@@ -79,11 +82,8 @@ namespace JobPortalMVC.Controllers
                 return View(company);
             }
 
-            // "Add" Operation: CompanyId is 0
             if (company.CompanyId == 0)
             {
-                // IMPORTANT: This should be set from the logged-in user's identity.
-                // Using a hardcoded value '1' for demonstration purposes.
                 company.UserId = 1;
 
                 var json = JsonConvert.SerializeObject(company);
@@ -120,8 +120,6 @@ namespace JobPortalMVC.Controllers
             ViewData["Title"] = company.CompanyId == 0 ? "Create Company Profile" : "Edit Company Profile";
             return View(company);
         }
-
-
         #endregion
 
         #region Catagory
@@ -171,7 +169,7 @@ namespace JobPortalMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddEditCategory(JobCatagoryModel category) // Renamed
+        public async Task<IActionResult> AddEditCategory(JobCatagoryModel category) 
         {
             if (!ModelState.IsValid)
             {
@@ -179,9 +177,9 @@ namespace JobPortalMVC.Controllers
                 return View(category);
             }
 
-            if (category.CategoryId == 0) // This is a new Category
+            if (category.CategoryId == 0) 
             {
-                category.UserId = 1; // Set UserId from logged-in user
+                category.UserId = 1; 
                 var json = JsonConvert.SerializeObject(category);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await _client.PostAsync("JobCategory/AddJobCategory", content);
@@ -190,26 +188,22 @@ namespace JobPortalMVC.Controllers
                     ModelState.AddModelError("", "API Error: Could not create category.");
                 }
             }
-            else // This is an update
+            else 
             {
                 var json = JsonConvert.SerializeObject(category);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                // This calls the PUT endpoint we just fixed.
                 var response = await _client.PutAsync($"JobCategory/UpdateJobCategory/{category.CategoryId}", content);
 
-                // This logic is now enhanced for better debugging
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("CategoryList");
                 }
                 else
                 {
-                    // IMPORTANT DEBUGGING STEP: Read the error from the API response body.
                     var errorContent = await response.Content.ReadAsStringAsync();
                     ModelState.AddModelError(string.Empty, $"API Error ({response.StatusCode}): {errorContent}");
 
-                    // Return to the form with the error message displayed
                     ViewData["Title"] = "Edit Job Category";
                     return View(category);
                 }
@@ -226,14 +220,141 @@ namespace JobPortalMVC.Controllers
         #endregion
 
         #region Jobs
-        public IActionResult AddJob()
+        public async Task <IActionResult> JobsList()
         {
-            return View();
+            var response = await _client.GetAsync("Job/GetAllJobs");
+            var json = await response.Content.ReadAsStringAsync();
+            var list = JsonConvert.DeserializeObject<List<JobModel>>(json);
+            return View(list);
         }
 
-        public IActionResult JobsList()
+        public async Task<ActionResult> DeleteJob(int id)
         {
-            return View();
+            var response = await _client.DeleteAsync($"Job/DeleteJob/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("JobsList");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Could not delete Job. It might be in use.";
+                return RedirectToAction("JobsList");
+            }
+        }
+
+        public async Task<IActionResult> AddEditJob(int? id)
+        {
+            var jobModel = new JobModel();
+
+            if (id == null || id == 0) 
+            {
+                ViewData["Title"] = "Create Job";
+            }
+            else 
+            {
+                ViewData["Title"] = "Edit Job";
+                var response = await _client.GetAsync($"Job/GetJob/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    jobModel = JsonConvert.DeserializeObject<JobModel>(json);
+                    if (jobModel == null) return NotFound();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            await PopulateJobFormDropdowns(jobModel);
+            return View(jobModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddEditJob(JobModel job)
+        {
+            await PopulateJobFormDropdowns(job);
+
+            if (!ModelState.IsValid)
+            {
+                ViewData["Title"] = job.JobId == 0 ? "Create Job" : "Edit Job";
+                return View(job);
+            }
+
+            if (job.JobId == 0) 
+            {
+                job.UserId = 1;
+
+                var json = JsonConvert.SerializeObject(job);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync("Job/AddJob", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError("", $"API Error: Could not create job. {errorContent}");
+                    ViewData["Title"] = "Create Job";
+                    return View(job); 
+                }
+            }
+            else 
+            {
+                var json = JsonConvert.SerializeObject(job);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _client.PutAsync($"Job/UpdateJob/{job.JobId}", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError(string.Empty, $"API Error ({response.StatusCode}): {errorContent}");
+
+                    ViewData["Title"] = "Edit Job";
+                    return View(job); 
+                }
+            }
+            return RedirectToAction("JobsList");
+        }
+
+        private async Task PopulateJobFormDropdowns(JobModel jobModel)
+        {
+            // Fetch Companies 
+            var companyResponse = await _client.GetAsync("Company");
+            if (companyResponse.IsSuccessStatusCode)
+            {
+                var companyJson = await companyResponse.Content.ReadAsStringAsync();
+                var companies = JsonConvert.DeserializeObject<List<CompanyModel>>(companyJson);
+                jobModel.Companies = companies.Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.CompanyId.ToString()
+                }).ToList();
+            }
+
+            // Fetch Categories 
+            var categoryResponse = await _client.GetAsync("JobCategory/GetAllJobCategories");
+            if (categoryResponse.IsSuccessStatusCode)
+            {
+                var categoryJson = await categoryResponse.Content.ReadAsStringAsync();
+                var categories = JsonConvert.DeserializeObject<List<JobCatagoryModel>>(categoryJson);
+                jobModel.Categories = categories.Select(c => new SelectListItem
+                {
+                    Text = c.CategoryName,
+                    Value = c.CategoryId.ToString()
+                }).ToList();
+            }
+
+            var skillResponse = await _client.GetAsync("Skill/GetAllSkills");
+            if (skillResponse.IsSuccessStatusCode)
+            {
+                var skillJson = await skillResponse.Content.ReadAsStringAsync();
+                var skills = JsonConvert.DeserializeObject<List<SkillModel>>(skillJson);
+                jobModel.SkillsList = skills.Select(s => new SelectListItem
+                {
+                    Text = s.SkillName,
+                    Value = s.SkillId.ToString()
+                }).ToList();
+            }
         }
         #endregion
 
@@ -304,20 +425,6 @@ namespace JobPortalMVC.Controllers
                 var json = JsonConvert.SerializeObject(skill);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await _client.PostAsync("Skill/AddSkill", content);
-                if (!response.IsSuccessStatusCode)
-                {
-                    ModelState.AddModelError("", "API Error: Could not create Skill.");
-                }
-            }
-            else 
-            {
-                var json = JsonConvert.SerializeObject(skill);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                // This calls the PUT endpoint we just fixed.
-                var response = await _client.PutAsync($"Skill/UpdateSkill/{skill.SkillId}", content);
-
-                // This logic is now enhanced for better debugging
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("SkillsList");
@@ -326,9 +433,23 @@ namespace JobPortalMVC.Controllers
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     ModelState.AddModelError(string.Empty, $"API Error ({response.StatusCode}): {errorContent}");
+                }
+            }
+            else 
+            {
+                var json = JsonConvert.SerializeObject(skill);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    ViewData["Title"] = "Edit Skill";
-                    return View(skill);
+                var response = await _client.PutAsync($"Skill/UpdateSkill/{skill.SkillId}", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("SkillsList");
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError(string.Empty, $"API Error ({response.StatusCode}): {errorContent}");
                 }
             }
 

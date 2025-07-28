@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<JobPortalMVC.Models.SkillModel>
+
+@{
     ViewData["Title"] = "Skills Management";
     Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
 }
@@ -184,12 +186,21 @@
 <div class="skills-list-page">
     <div class="page-header">
         <h1>Skills Management</h1>
-        <a asp-action="AddSkill" asp-controller="Employeer" class="btn btn-primary">
+        <!-- This link now correctly points to the AddEditSkill action for creating a new skill -->
+        <a asp-action="AddEditSkill" asp-controller="Employeer" class="btn btn-primary">
             <i class="fa-solid fa-plus me-2"></i>Add New Skill
         </a>
     </div>
 
     <div class="list-card">
+        <!-- Display any error messages passed from the controller (e.g., delete failed) -->
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger my-3" role="alert">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
         <div class="table-responsive mt-3">
             <table class="skills-table">
                 <thead>
@@ -200,84 +211,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Hardcoded Row 1 -->
-                    <tr>
-                        <td class="skill-name">C#</td>
-                        <td>10/31/2023 10:45 AM</td>
-                        <td class="text-end action-buttons">
-                            <a asp-action="EditSkill" asp-route-id="1" class="btn btn-sm btn-outline-primary" title="Edit">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
-                            <a asp-action="DeleteSkill" asp-route-id="1" class="btn btn-sm btn-outline-danger" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Hardcoded Row 2 -->
-                    <tr>
-                        <td class="skill-name">ASP.NET Core</td>
-                        <td>10/30/2023 03:20 PM</td>
-                        <td class="text-end action-buttons">
-                            <a asp-action="EditSkill" asp-route-id="2" class="btn btn-sm btn-outline-primary" title="Edit">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
-                            <a asp-action="DeleteSkill" asp-route-id="2" class="btn btn-sm btn-outline-danger" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Hardcoded Row 3 -->
-                    <tr>
-                        <td class="skill-name">JavaScript</td>
-                        <td>10/28/2023 09:00 AM</td>
-                        <td class="text-end action-buttons">
-                            <a asp-action="EditSkill" asp-route-id="3" class="btn btn-sm btn-outline-primary" title="Edit">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
-                            <a asp-action="DeleteSkill" asp-route-id="3" class="btn btn-sm btn-outline-danger" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Hardcoded Row 4 -->
-                    <tr>
-                        <td class="skill-name">SQL Server</td>
-                        <td>10/25/2023 05:15 PM</td>
-                        <td class="text-end action-buttons">
-                            <a asp-action="EditSkill" asp-route-id="4" class="btn btn-sm btn-outline-primary" title="Edit">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
-                            <a asp-action="DeleteSkill" asp-route-id="4" class="btn btn-sm btn-outline-danger" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Hardcoded Row 5 -->
-                    <tr>
-                        <td class="skill-name">Azure DevOps</td>
-                        <td>10/22/2023 11:00 AM</td>
-                        <td class="text-end action-buttons">
-                            <a asp-action="EditSkill" asp-route-id="5" class="btn btn-sm btn-outline-primary" title="Edit">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
-                            <a asp-action="DeleteSkill" asp-route-id="5" class="btn btn-sm btn-outline-danger" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Hardcoded Row 6 -->
-                    <tr>
-                        <td class="skill-name">UI/UX Design</td>
-                        <td>10/20/2023 01:30 PM</td>
-                        <td class="text-end action-buttons">
-                            <a asp-action="EditSkill" asp-route-id="6" class="btn btn-sm btn-outline-primary" title="Edit">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
-                            <a asp-action="DeleteSkill" asp-route-id="6" class="btn btn-sm btn-outline-danger" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var skill in Model)
+                        {
+                            <tr>
+                                <td class="skill-name">@skill.SkillName</td>
+                                <!-- Add a null check or use .Value to access the date -->
+                                <td>@(skill.CreatedAt.HasValue? skill.CreatedAt.Value.ToString("MM/dd/yyyy hh:mm tt") : "N/A")</td>
+                                <td class="text-end action-buttons">
+                                    <!-- Edit Link: Passes the specific skill's ID to the action -->
+                                    <a asp-action="AddEditSkill" asp-route-id="@skill.SkillId" class="btn btn-sm btn-outline-primary" title="Edit">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                    <!-- Delete Link: Passes the specific skill's ID to the action -->
+                                    <a asp-action="DeleteSkill" asp-route-id="@skill.SkillId" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this skill?')">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center p-4">No skills have been added yet.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

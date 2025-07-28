@@ -1,0 +1,357 @@
+@model JobPortalMVC.Models.UserSkillModel;
+
+@{
+    ViewData["Title"] = Model.SkillId > 0 ? "Edit Skill" : "Add Skills";
+    Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+        <!-- Success/Error Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-check-circle me-2"></i>
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form id="master-skill-form">
+            @Html.AntiForgeryToken()
+
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">@(Model.SkillId > 0 ? "Edit Skill" : "Manage Your Skills")</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Add New Skill Section -->
+                    <div class="mb-4">
+                        <div class="mb-3">
+                            <label for="custom-skill-input" class="form-label">
+                                <i class="fa-solid fa-@(Model.SkillId > 0 ? "edit" : "plus")-circle me-2"></i>@(Model.SkillId > 0 ? "Edit Skill" : "Add New Skill")
+                            </label>
+                            <input type="text" id="custom-skill-input" class="form-control form-control-lg" placeholder="e.g., Machine Learning, Docker, Kubernetes, Python..." maxlength="100" value="@Model.SkillName">
+                            <input type="hidden" id="skill-id" value="@Model.SkillId">
+                            <div class="form-text">@(Model.SkillId > 0 ? "Edit your existing skill." : "Enter any skill you want to add to your profile.")</div>
+                        </div>
+                        <button type="button" id="add-skill-btn" class="btn btn-success w-100">
+                            <i class="fa-solid fa-@(Model.SkillId > 0 ? "save" : "sparkles") me-2"></i>@(Model.SkillId > 0 ? "Update Skill" : "Add Skill")
+                        </button>
+                    </div>
+
+                    <div class="skills-list-container">
+                        <h5 class="mt-4">Your Selected Skills:</h5>
+                        <ul id="selected-skills-list" class="list-group mb-3">
+                            <li id="empty-list-message" class="list-group-item text-muted">
+                                No skills have been added yet.
+                            </li>
+                        </ul>
+                        <div id="hidden-skills-container"></div>
+                    </div>
+                </div>
+
+                <div class="card-footer text-end">
+                    <a asp-controller="JobSeeker" asp-action="SkillsList" class="btn btn-secondary me-2">Cancel</a>
+                    @if (Model.SkillId > 0)
+                    {
+                        <button type="submit" class="btn btn-success">Update Skill</button>
+                    }
+                    else
+                    {
+                        <a asp-controller="JobSeeker" asp-action="SkillsList" class="btn btn-success">Save Skills</a>
+                    }
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const masterForm = document.getElementById('master-skill-form');
+            const skillInput = document.getElementById('custom-skill-input');
+            const addSkillButton = document.getElementById('add-skill-btn');
+            const skillsList = document.getElementById('selected-skills-list');
+            const emptyMessage = document.getElementById('empty-list-message');
+            const hiddenSkillsContainer = document.getElementById('hidden-skills-container');
+
+            let skillIdCounter = 0;
+            let editingSkillItem = null; // To keep track of the skill being edited
+
+            const updateEmptyMessage = () => {
+                const hasItems = skillsList.querySelector('li:not(#empty-list-message)');
+                emptyMessage.style.display = hasItems ? 'none' : 'block';
+            };
+
+            // Function to create a new skill item in the list
+            const createSkillListItem = (skillName, skillId) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center skill-item';
+                listItem.dataset.skill = skillName;
+                listItem.dataset.skillId = skillId;
+
+                const skillContent = document.createElement('div');
+                skillContent.className = 'd-flex align-items-center';
+                skillContent.innerHTML = `<i class="fa-solid fa-code text-primary me-2"></i> <span class="fw-medium skill-name">${skillName}</span>`;
+
+                const buttonsDiv = document.createElement('div');
+
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'btn btn-sm btn-outline-primary me-2';
+                editBtn.innerHTML = '<i class="fa-solid fa-pencil"></i>';
+                editBtn.title = 'Edit skill';
+
+                editBtn.addEventListener('click', () => {
+                    skillInput.value = skillName;
+                    addSkillButton.textContent = 'Update Skill';
+                    editingSkillItem = listItem;
+                });
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'btn btn-sm btn-outline-danger';
+                deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                deleteBtn.title = 'Remove skill';
+
+                deleteBtn.addEventListener('click', async () => {
+                    if (confirm(`Are you sure you want to delete the skill "${skillName}"?`)) {
+                        try {
+                            const response = await fetch(`/JobSeeker/DeleteUserSkill?skillId=${skillId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                                }
+                            });
+                            if (response.ok) {
+                                listItem.remove();
+                                updateEmptyMessage();
+                            } else {
+                                alert("Failed to delete the skill.");
+                            }
+                        } catch (error) {
+                            console.error("Error deleting skill:", error);
+                        }
+                    }
+                });
+
+                buttonsDiv.appendChild(editBtn)
+                buttonsDiv.appendChild(deleteBtn);
+                listItem.appendChild(skillContent);
+                listItem.appendChild(buttonsDiv);
+                skillsList.appendChild(listItem);
+            };
+
+            // Add or Update Skill Button Handler
+            const addOrUpdateUserSkill = async () => {
+                const skillName = skillInput.value.trim();
+                if (!skillName) {
+                    alert('Please enter a skill.');
+                    return;
+                }
+
+                // Check if we're in edit mode (either editing an item in the list or editing from the edit page)
+                const isEditMode = editingSkillItem || document.getElementById('skill-id').value > 0;
+                
+                if (isEditMode) {
+                    // Update logic using the PUT endpoint
+                    const skillId = editingSkillItem ? editingSkillItem.dataset.skillId : document.getElementById('skill-id').value;
+                    
+                    try {
+                        addSkillButton.disabled = true;
+                        addSkillButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Updating...';
+                        
+                        const response = await fetch('/JobSeeker/UpdateUserSkill', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: JSON.stringify({ 
+                                skillId: parseInt(skillId),
+                                skillName: skillName 
+                            })
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                // If we're in the edit page, redirect to the skills list
+                                if (document.getElementById('skill-id').value > 0) {
+                                    window.location.href = '/JobSeeker/SkillsList';
+                                    return;
+                                }
+                                
+                                // Otherwise update the list item
+                                if (editingSkillItem) {
+                                    editingSkillItem.querySelector('.skill-name').textContent = skillName;
+                                    editingSkillItem.dataset.skill = skillName;
+                                    skillInput.value = '';
+                                    addSkillButton.innerHTML = '<i class="fa-solid fa-sparkles me-2"></i>Add Skill';
+                                    editingSkillItem = null;
+                                }
+                            }
+                        } else {
+                            const errorText = await response.text();
+                            throw new Error(errorText || "Server error");
+                        }
+                    } catch (error) {
+                        console.error("Failed to update skill:", error);
+                        alert("Error: " + error.message);
+                    } finally {
+                        addSkillButton.disabled = false;
+                        if (!document.getElementById('skill-id').value > 0) {
+                            addSkillButton.innerHTML = '<i class="fa-solid fa-sparkles me-2"></i>Add Skill';
+                        } else {
+                            addSkillButton.innerHTML = '<i class="fa-solid fa-save me-2"></i>Update Skill';
+                        }
+                    }
+
+                } else {
+                    // Add new skill logic
+                    const existingSkills = Array.from(skillsList.querySelectorAll('.skill-item'));
+                    if (existingSkills.some(item => item.dataset.skill.toLowerCase() === skillName.toLowerCase())) {
+                        alert('This skill is already in your list.');
+                        return;
+                    }
+
+                    addSkillButton.disabled = true;
+                    addSkillButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Adding...';
+
+                    try {
+                        const response = await fetch('/JobSeeker/AddUserSkill', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: JSON.stringify({ skillName: skillName })
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                createSkillListItem(result.skill.skillName, result.skill.skillId);
+                                updateEmptyMessage();
+                                skillInput.value = ''; // Clear input on success
+                            } else {
+                                throw new Error(result.message || "An error occurred.");
+                            }
+                        } else {
+                            const errorText = await response.text();
+                            throw new Error(errorText || "Server error");
+                        }
+                    } catch (error) {
+                        console.error("Failed to add skill:", error);
+                        alert("Error: " + error.message);
+                    } finally {
+                        addSkillButton.disabled = false;
+                        addSkillButton.innerHTML = '<i class="fa-solid fa-sparkles me-2"></i>Add Skill';
+                    }
+                }
+            };
+
+            addSkillButton.addEventListener('click', () => {
+                // If we're in edit mode, submit the form
+                if (document.getElementById('skill-id').value > 0) {
+                    document.getElementById('master-skill-form').dispatchEvent(new Event('submit'));
+                } else {
+                    addOrUpdateUserSkill();
+                }
+            });
+            skillInput.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') {
+                    e.preventDefault();
+                    // If we're in edit mode, submit the form
+                    if (document.getElementById('skill-id').value > 0) {
+                        document.getElementById('master-skill-form').dispatchEvent(new Event('submit'));
+                    } else {
+                        addOrUpdateUserSkill();
+                    }
+                }
+            });
+
+
+            // Handle final form submission
+            masterForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Always prevent default form submission
+                
+                // If we're in edit mode, trigger the update function
+                if (document.getElementById('skill-id').value > 0) {
+                    addOrUpdateUserSkill();
+                    return;
+                }
+                
+                // Otherwise handle the multiple skills submission
+                hiddenSkillsContainer.innerHTML = '';
+                const selectedSkillElements = skillsList.querySelectorAll('.skill-item');
+
+                if (selectedSkillElements.length === 0) {
+                    alert("Please add at least one skill before saving.");
+                    return;
+                }
+                
+                // Redirect to skills list after adding skills
+                window.location.href = '/JobSeeker/SkillsList';
+                
+                // This code is kept for reference but won't execute due to the redirect
+                selectedSkillElements.forEach(li => {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'Skills';
+                    hiddenInput.value = li.dataset.skill;
+                    hiddenSkillsContainer.appendChild(hiddenInput);
+                });
+            });
+
+            // Initialize the page
+            updateEmptyMessage();
+        });
+    </script>
+
+    <style>
+        .card {
+            background-color: var(--theme-card-bg) !important;
+            border-color: var(--theme-card-border) !important;
+            box-shadow: var(--theme-card-shadow) !important;
+        }
+
+        .card-header, .card-footer {
+            background-color: var(--theme-bg-surface-2) !important;
+            border-color: var(--theme-border-color) !important;
+        }
+
+        .list-group-item {
+            background-color: var(--theme-card-bg) !important;
+            border-color: var(--theme-border-color) !important;
+            color: var(--theme-text-primary) !important;
+        }
+
+        .btn-outline-primary:hover {
+            color: #fff !important; 
+        }
+
+        .edit-skill-btn:hover {
+            color: #fff !important; 
+        }
+        
+        .btn-success {
+            background: var(--theme-brand-gradient) !important;
+            border: none !important;
+        }
+    </style>
+}

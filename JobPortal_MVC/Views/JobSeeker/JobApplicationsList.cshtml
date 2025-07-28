@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Available Job Listings";
     // Assuming a layout file for a Job Seeker. Change this if your layout has a different name.
     Layout = "~/Views/Shared/_JobSeekerLayout.cshtml";
@@ -8,13 +8,39 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <style>
+    /* Additional Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --theme-bg-surface-0: #f4f7f6;
+        --theme-bg-surface-3: #e1e5e8;
+        --theme-text-tertiary: #95a5a6;
+        --theme-text-on-accent: #ffffff;
+        --theme-accent-color: #3498db;
+        --theme-accent-color-hover: #2980b9;
+        --theme-accent-color-secondary: #f1c40f;
+        --theme-accent-color-danger: #e74c3c;
+        --theme-card-shadow-hover: 0 6px 15px rgba(0,0,0,0.12);
+    }
+
+    [data-bs-theme="dark"] {
+        --theme-bg-surface-0: #0a101c;
+        --theme-bg-surface-3: #2a3245;
+        --theme-text-tertiary: #7a8599;
+        --theme-text-on-accent: #ffffff;
+        --theme-accent-color: #4d7cfe;
+        --theme-accent-color-hover: #3a6ae0;
+        --theme-accent-color-secondary: #ffd43b;
+        --theme-accent-color-danger: #ff6b6b;
+        --theme-card-shadow-hover: 0 6px 15px rgba(0,0,0,0.25);
+    }
+    
     /* Filter Panel Styles */
     .filter-panel {
-        background-color: #ffffff;
+        background-color: var(--theme-bg-surface-1);
         padding: 20px 25px;
         border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        box-shadow: var(--theme-card-shadow);
         margin-bottom: 30px;
+        border: 1px solid var(--theme-border-color);
     }
 
     .filter-header {
@@ -27,19 +53,19 @@
         .filter-header h3 {
             margin: 0;
             font-size: 1.25rem;
-            color: #2c3e50;
+            color: var(--theme-text-primary);
         }
 
     #filter-status-text {
         margin: 0;
         font-size: 1.1rem;
         font-weight: 600;
-        color: #27ae60;
+        color: var(--theme-text-brand);
     }
 
         #filter-status-text i {
             margin-right: 8px;
-            color: #f1c40f;
+            color: var(--theme-text-brand);
         }
 
     .skill-filter-adder {
@@ -65,8 +91,8 @@
     .filter-tag {
         display: inline-flex;
         align-items: center;
-        background-color: #e9ecef;
-        color: #495057;
+        background-color: var(--theme-bg-surface-2);
+        color: var(--theme-text-secondary);
         padding: 5px 10px;
         border-radius: 15px;
         font-size: 0.9rem;
@@ -87,7 +113,7 @@
 
     /* Main Page and Job Card Styles */
     .job-list-page {
-        background-color: #f4f7f6;
+        background-color: var(--theme-bg-surface-0);
         padding: 20px 30px;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -99,34 +125,59 @@
     }
 
     .job-card {
-        background-color: #ffffff;
+        background-color: var(--theme-bg-surface-1);
         border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        padding: 25px;
+        box-shadow: var(--theme-card-shadow);
+        padding: 25px 25px 25px 30px; /* Increased left padding to accommodate the colored strip */
         transition: transform 0.2s, box-shadow 0.2s;
-        border-left: 5px solid #3498db;
+        border: 1px solid var(--theme-border-color);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Job card with different colored left borders using pseudo-elements for better styling */
+    .job-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: linear-gradient(to bottom, #3498db, #2980b9);
+    }
+    
+    .job-card:nth-child(3n+1)::before {
+        background: linear-gradient(to bottom, #3498db, #2980b9); /* Blue gradient */
+    }
+    
+    .job-card:nth-child(3n+2)::before {
+        background: linear-gradient(to bottom, #2ecc71, #27ae60); /* Green gradient */
+    }
+    
+    .job-card:nth-child(3n+3)::before {
+        background: linear-gradient(to bottom, #f39c12, #e67e22); /* Orange gradient */
     }
 
         .job-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+            box-shadow: var(--theme-card-shadow-hover);
         }
 
     .job-card-header h2 {
         font-size: 1.4rem;
-        color: #2c3e50;
+        color: var(--theme-text-primary);
         margin: 0 0 5px 0;
     }
 
     .job-card-header .company-name {
         font-size: 1rem;
         font-weight: 600;
-        color: #7f8c8d;
+        color: var(--theme-text-secondary);
     }
 
     .job-card-description {
         margin: 15px 0;
-        color: #566573;
+        color: var(--theme-text-secondary);
         font-size: 0.95rem;
         line-height: 1.6;
     }
@@ -135,7 +186,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 15px;
-        color: #34495e;
+        color: var(--theme-text-secondary);
         font-size: 0.95rem;
     }
 
@@ -148,13 +199,13 @@
             margin-right: 8px;
             width: 18px;
             height: 18px;
-            fill: #3498db;
+            fill: var(--theme-accent-color);
             flex-shrink: 0;
         }
 
     /* Actions Bar Styling */
     .job-card-actions {
-        border-top: 1px solid #ecf0f1;
+        border-top: 1px solid var(--theme-border-color);
         padding-top: 20px;
         margin-top: 20px;
         display: flex;
@@ -180,29 +231,29 @@
     }
 
     .btn-primary {
-        background-color: #3498db;
-        color: white;
+        background-color: var(--theme-accent-color);
+        color: var(--theme-text-on-accent);
     }
 
         .btn-primary:hover {
-            background-color: #2980b9;
+            background-color: var(--theme-accent-color-hover);
         }
 
     .btn-secondary {
-        background-color: #f1f2f6;
-        color: #34495e;
-        border-color: #dadfe1;
+        background-color: var(--theme-bg-surface-2);
+        color: var(--theme-text-secondary);
+        border-color: var(--theme-border-color);
     }
 
         .btn-secondary:hover {
-            background-color: #e1e5e8;
+            background-color: var(--theme-bg-surface-3);
         }
 
     /* Save Button Specific Styles */
     .btn-save {
         background: none;
         border: none;
-        color: #95a5a6;
+        color: var(--theme-text-tertiary);
         font-size: 1.6rem;
         padding: 5px;
         cursor: pointer;
@@ -210,16 +261,16 @@
     }
 
         .btn-save:hover {
-            color: #3498db;
+            color: var(--theme-accent-color);
             transform: scale(1.1);
         }
 
         .btn-save.saved {
-            color: #f1c40f;
+            color: var(--theme-accent-color-secondary);
         }
 
             .btn-save.saved:hover {
-                color: #e74c3c;
+                color: var(--theme-accent-color-danger);
             }
 </style>
 
@@ -375,6 +426,27 @@
                     }
                 });
             });
+            
+            // --- SCRIPT 3: THEME SYNC FUNCTIONALITY ---
+            // This ensures the page respects the theme toggle from the layout
+            const syncThemeWithLayout = () => {
+                // The theme is set on the html element by the layout's theme toggle script
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+                // We can apply additional theme-specific styling here if needed
+                console.log('Current theme on JobApplicationsList:', currentTheme);
+            };
+            
+            // Initial sync
+            syncThemeWithLayout();
+            
+            // Listen for theme changes
+            const themeToggleButton = document.getElementById('theme-toggle');
+            if (themeToggleButton) {
+                themeToggleButton.addEventListener('click', () => {
+                    // Allow time for the theme to change in the layout script
+                    setTimeout(syncThemeWithLayout, 100);
+                });
+            }
         });
     </script>
 }

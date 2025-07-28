@@ -183,22 +183,28 @@
 
 <div class="add-skill-page">
     <div class="page-header">
-        <h1>Add New Skill</h1>
+        <!-- The H1 tag is now dynamic -->
+        <h1>@ViewData["Title"]</h1>
         <a asp-controller="Employeer" asp-action="SkillsList" class="btn btn-secondary">
             <i class="fa-solid fa-arrow-left me-2"></i>Back to Skills List
         </a>
     </div>
 
     <!-- Main form container -->
-    <form asp-action="AddSkill" method="post" class="form-card">
+    <form asp-action="AddEditSkill" method="post" class="form-card">
         @Html.AntiForgeryToken()
-        <!-- This will display model-level errors, like "Skill already exists" -->
+
+        <!-- This hidden field is ESSENTIAL for the Edit functionality to work.
+             It holds the ID of the skill being edited. For a new skill, its value will be 0. -->
+        <input type="hidden" asp-for="SkillId" />
+
+        <!-- Displays model-level errors from the API -->
         <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 text-center" role="alert"></div>
 
         <div class="mb-4">
-            <label asp-for="SkillName" class="form-label">Skill Name</label>
+            <label asp-for="SkillName" class="form-label"></label>
             <div class="input-icon-group">
-                <input asp-for="SkillName" class="form-control" />
+                <input asp-for="SkillName" class="form-control" placeholder="e.g., C# or JavaScript" />
                 <span class="input-icon">
                     <i class="fa-solid fa-pencil"></i>
                 </span>
@@ -207,7 +213,10 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Add Skill</button>
+            <!-- The button text changes based on whether it's a new skill (Id=0) or an existing one -->
+            <button type="submit" class="btn btn-primary">
+                @(Model.SkillId == 0 ? "Add Skill" : "Update Skill")
+            </button>
         </div>
     </form>
 </div>

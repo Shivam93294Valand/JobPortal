@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace JobPortalMVC.Models
 {
@@ -18,20 +19,15 @@ namespace JobPortalMVC.Models
         [Required(ErrorMessage = "Qualifications are required")]
         public string Qualifications { get; set; } = null!;
 
-        [Required(ErrorMessage = "Skills are required")]
-        public string Skills { get; set; } = null!;
-
         [Display(Name = "Active")]
         public bool IsActive { get; set; }
 
         [Required(ErrorMessage = "Location is required")]
         public string Location { get; set; } = null!;
 
-        [Required(ErrorMessage = "Salary Range is required")]
-        public string? SalaryRange { get; set; }
+        public string? SalaryRange { get; set; } 
 
-        [Required(ErrorMessage = "Experience Range is required")]
-        public string? ExperienceRange { get; set; }
+        public string? ExperienceRange { get; set; } 
 
         [Required(ErrorMessage = "Job Type is required")]
         public string JobType { get; set; } = null!;
@@ -39,16 +35,23 @@ namespace JobPortalMVC.Models
         [Required(ErrorMessage = "Date is required")]
         public DateOnly ExpiresAt { get; set; }
 
+        [Required(ErrorMessage = "Category is required")]
         public int CategoryId { get; set; }
 
+        [Required(ErrorMessage = "Company is required")]
         public int CompanyId { get; set; }
 
         public int UserId { get; set; }
 
+        [Required(ErrorMessage = "Skill is required")]
         public int SkillId { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
+
+        public IEnumerable<SelectListItem> Companies { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> SkillsList { get; set; } = new List<SelectListItem>();
     }
 }

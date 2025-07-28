@@ -1,0 +1,461 @@
+﻿@model JobPortalMVC.Models.JobModel
+
+@{
+    ViewData["Title"] = Model.JobId == 0 ? "Create Job Posting" : "Edit Job Posting";
+    Layout = "~/Views/Shared/_EmployeerLayout.cshtml";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
+<style>
+    /* Theme Variables */
+    :root, [data-bs-theme="light"] {
+        --add-job-bg: #f4f7f6;
+        --add-job-card-bg: #ffffff;
+        --add-job-text: #2c3e50;
+        --add-job-text-secondary: #34495e;
+        --add-job-border: #ecf0f1;
+        --add-job-input-border: #dadfe1;
+        --add-job-input-bg: #ffffff;
+        --add-job-input-focus: #3498db;
+        --add-job-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        --add-job-btn-secondary-bg: #f1f2f6;
+        --add-job-btn-secondary-text: #34495e;
+        --add-job-btn-secondary-border: #dadfe1;
+        --add-job-btn-secondary-hover: #e1e5e8;
+        --add-job-btn-primary-bg: #3498db;
+        --add-job-btn-primary-hover: #2980b9;
+        --add-job-btn-outline-secondary: #6c757d;
+        --add-job-btn-outline-secondary-border: #ced4da;
+        --add-job-accent: #3498db;
+        --add-job-modal-bg: #ffffff;
+        --add-job-modal-header-bg: #f8f9fa;
+        --add-job-modal-border: #dee2e6;
+    }
+
+    [data-bs-theme="dark"] {
+        --add-job-bg: #0f1521;
+        --add-job-card-bg: #1a2234;
+        --add-job-text: #e5e9f0;
+        --add-job-text-secondary: #d1d5db;
+        --add-job-border: #2a3245;
+        --add-job-input-border: #374151;
+        --add-job-input-bg: #1f2937;
+        --add-job-input-focus: #6078ff;
+        --add-job-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        --add-job-btn-secondary-bg: #374151;
+        --add-job-btn-secondary-text: #d1d5db;
+        --add-job-btn-secondary-border: #4b5563;
+        --add-job-btn-secondary-hover: #4b5563;
+        --add-job-btn-primary-bg: #6078ff;
+        --add-job-btn-primary-hover: #5983ff;
+        --add-job-btn-outline-secondary: #9ca3af;
+        --add-job-btn-outline-secondary-border: #4b5563;
+        --add-job-accent: #6078ff;
+        --add-job-modal-bg: #1a2234;
+        --add-job-modal-header-bg: #374151;
+        --add-job-modal-border: #4b5563;
+    }
+
+    /* Adopt styles from the Job Listings page for consistency */
+    .create-job-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--add-job-bg);
+        padding: 20px 30px;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Page Header: Title + Button */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+        max-width: 1140px; /* Match form width */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .page-header h1 {
+        color: var(--add-job-text);
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    /* The main card containing the entire form */
+    .job-form-card {
+        max-width: 1140px;
+        margin: 0 auto;
+        background-color: var(--add-job-card-bg);
+        border-radius: 8px;
+        box-shadow: var(--add-job-shadow);
+        border-left: 5px solid var(--add-job-accent); /* Blue accent border from list page */
+        padding: 30px 40px;
+        transition: all 0.3s ease;
+    }
+
+    /* Subtle headers to group fields within the single card */
+    .form-section-header {
+        font-size: 1.2rem;
+        color: var(--add-job-text);
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--add-job-border);
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    /* General field styling */
+    .form-label {
+        font-weight: 600;
+        color: var(--add-job-text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: var(--add-job-input-bg);
+        border: 1px solid var(--add-job-input-border);
+        color: var(--add-job-text);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: var(--add-job-input-bg);
+        border-color: var(--add-job-input-focus);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        color: var(--add-job-text);
+    }
+
+    .form-control::placeholder {
+        color: var(--add-job-btn-outline-secondary);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+    }
+
+    #map-container {
+        height: 400px;
+    }
+
+    /* Button styles */
+    .btn {
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: var(--add-job-btn-primary-bg);
+        color: white;
+        border-color: var(--add-job-btn-primary-bg);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--add-job-btn-primary-hover);
+        border-color: var(--add-job-btn-primary-hover);
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: var(--add-job-btn-secondary-bg);
+        color: var(--add-job-btn-secondary-text);
+        border-color: var(--add-job-btn-secondary-border);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--add-job-btn-secondary-hover);
+        color: var(--add-job-btn-secondary-text);
+    }
+
+    .btn-outline-secondary {
+        color: var(--add-job-btn-outline-secondary);
+        border-color: var(--add-job-btn-outline-secondary-border);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: var(--add-job-btn-secondary-bg);
+        color: var(--add-job-btn-secondary-text);
+    }
+
+    .form-actions {
+        border-top: 1px solid var(--add-job-border);
+        padding-top: 25px;
+        margin-top: 15px;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--add-job-accent);
+        border-color: var(--add-job-accent);
+    }
+
+    .form-check-label {
+        color: var(--add-job-text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    /* Modal styling */
+    .modal-content {
+        background-color: var(--add-job-modal-bg);
+        border: 1px solid var(--add-job-modal-border);
+        transition: all 0.3s ease;
+    }
+
+    .modal-header {
+        background-color: var(--add-job-modal-header-bg);
+        border-bottom: 1px solid var(--add-job-modal-border);
+        transition: all 0.3s ease;
+    }
+
+    .modal-title {
+        color: var(--add-job-text);
+        transition: color 0.3s ease;
+    }
+
+    .modal-body {
+        color: var(--add-job-text);
+        transition: color 0.3s ease;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--add-job-modal-border);
+        transition: border-color 0.3s ease;
+    }
+
+    .btn-close {
+        filter: var(--add-job-text) == #e5e9f0 ? invert(1) : none;
+    }
+
+    /* Smooth transitions for all elements */
+    * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    [data-bs-theme="dark"] .form-control:read-only {
+        background-color: var(--add-job-input-bg);
+        color: var(--add-job-text-secondary);
+        opacity: 0.8; 
+    }
+</style>
+
+<div class="create-job-page">
+    <div class="page-header">
+        <h1>@ViewData["Title"]</h1>
+        <a asp-controller="Employeer" asp-action="JobsList" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Listings
+        </a>
+    </div>
+
+    <form asp-controller="Employeer" asp-action="AddEditJob" method="POST" class="job-form-card">
+
+        <input type="hidden" asp-for="JobId" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <div class="row">
+            <!-- Group: Core Details -->
+            <h4 class="form-section-header">Core Details</h4>
+            <div class="col-12 mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" maxlength="150" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="col-12 mb-4">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <!-- Group: Requirements -->
+            <h4 class="form-section-header">Requirements & Responsibilities</h4>
+            <div class="col-md-6 mb-4">
+                <label asp-for="KeyResponsibilities" class="form-label"></label>
+                <textarea asp-for="KeyResponsibilities" class="form-control" rows="5" placeholder="List each responsibility on a new line..."></textarea>
+                <span asp-validation-for="KeyResponsibilities" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label asp-for="Qualifications" class="form-label"></label>
+                <textarea asp-for="Qualifications" class="form-control" rows="5" placeholder="List each qualification on a new line..."></textarea>
+                <span asp-validation-for="Qualifications" class="text-danger"></span>
+            </div>
+
+            <!-- Group: Logistics -->
+            <h4 class="form-section-header">Job Logistics</h4>
+            <div class="col-md-6 mb-4">
+                <label for="location" class="form-label">Location</label>
+                <div class="input-group">
+                    <input type="text" id="location" name="location" class="form-control" placeholder="Use buttons to select" required readonly>
+                    <button class="btn btn-outline-secondary" type="button" id="fetch-location-btn" title="Fetch Current Location"><i class="fa-solid fa-location-crosshairs"></i></button>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#mapModal" title="Select on Map"><i class="fa-solid fa-map-location-dot"></i></button>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label asp-for="JobType" class="form-label"></label>
+                <select asp-for="JobType" class="form-select">
+                    <option value="" disabled>Select a job type...</option>
+                    <option value="FullTime">Full-Time</option>
+                    <option value="PartTime">Part-Time</option>
+                    <option value="Contract">Contract</option>
+                </select>
+                <span asp-validation-for="JobType" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label asp-for="SalaryRange" class="form-label"></label>
+                <input asp-for="SalaryRange" class="form-control" placeholder="e.g., $80,000 - $100,000">
+                <span asp-validation-for="SalaryRange" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label asp-for="ExperienceRange" class="form-label"></label>
+                <input asp-for="ExperienceRange" class="form-control" placeholder="e.g., 3-5 Years">
+                <span asp-validation-for="ExperienceRange" class="text-danger"></span>
+            </div>
+
+            <!-- Group: Categorization -->
+            <h4 class="form-section-header">Settings & Categorization</h4>
+            <div class="col-md-6 mb-4">
+                <label asp-for="CategoryId" class="form-label">Job Category</label>
+                <select asp-for="CategoryId" asp-items="@Model.Categories" class="form-select">
+                    <option value="" disabled>Select a category...</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label asp-for="CompanyId" class="form-label">Company</label>
+                <select asp-for="CompanyId" asp-items="@Model.Companies" class="form-select">
+                    <option value="" disabled>Select a company...</option>
+                </select>
+                <span asp-validation-for="CompanyId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <label asp-for="SkillId" class="form-label">Primary Skill</label>
+                <select asp-for="SkillId" asp-items="@Model.SkillsList" class="form-select">
+                    <option value="" disabled>Select a skill...</option>
+                </select>
+                <span asp-validation-for="SkillId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <label asp-for="ExpiresAt" class="form-label">Application Deadline</label>
+                <input type="date" asp-for="ExpiresAt" class="form-control" value="@Model.ExpiresAt.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="ExpiresAt" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12 mb-4 d-flex align-items-center">
+                <div class="form-check form-switch">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" />
+                    <label asp-for="IsActive" class="form-check-label ms-2">Make job listing active immediately</label>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="col-12 form-actions">
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-controller="Employeer" asp-action="JobsList" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4 py-2">@(Model.JobId == 0 ? "Create Job" : "Save Changes")</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Map Modal (Functionality unchanged) -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">Select Job Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Click on the map to place a pin for the job location.</p>
+                <div id="map-container"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirm-location-btn">Confirm Location</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const locationInput = document.getElementById('Location');
+            const mapModalElement = document.getElementById('mapModal');
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const locationInput = document.getElementById('location');
+            const mapModalElement = document.getElementById('mapModal');
+            const confirmLocationBtn = document.getElementById('confirm-location-btn');
+            const fetchLocationBtn = document.getElementById('fetch-location-btn');
+            let map, marker, selectedLatLng;
+
+            mapModalElement.addEventListener('shown.bs.modal', function () {
+                if (!map) {
+                    map = L.map('map-container').setView([20, 0], 2);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+
+                    map.on('click', function(e) {
+                        selectedLatLng = e.latlng;
+                        if (!marker) { marker = L.marker(selectedLatLng).addTo(map); }
+                        else { marker.setLatLng(selectedLatLng); }
+                        marker.bindPopup("Selected Location").openPopup();
+                    });
+                }
+                setTimeout(() => map.invalidateSize(), 200);
+            });
+
+            async function getAddressFromCoords(lat, lng) {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                const data = await response.json();
+                if (data && data.display_name) { locationInput.value = data.display_name; }
+                else { alert('Could not determine address for this location.'); }
+            }
+
+            confirmLocationBtn.addEventListener('click', () => {
+                if (selectedLatLng) {
+                    getAddressFromCoords(selectedLatLng.lat, selectedLatLng.lng);
+                    bootstrap.Modal.getInstance(mapModalElement).hide();
+                } else {
+                    alert('Please select a location on the map first.');
+                }
+            });
+
+            fetchLocationBtn.addEventListener('click', () => {
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by your browser.');
+                    return;
+                }
+                fetchLocationBtn.disabled = true;
+                fetchLocationBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        getAddressFromCoords(position.coords.latitude, position.coords.longitude)
+                            .finally(() => {
+                                fetchLocationBtn.disabled = false;
+                                fetchLocationBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
+                            });
+                    },
+                    (error) => {
+                        alert(`Error fetching location: ${error.message}`);
+                        fetchLocationBtn.disabled = false;
+                        fetchLocationBtn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
+                    }
+                );
+            });
+        });
+    </script>
+}

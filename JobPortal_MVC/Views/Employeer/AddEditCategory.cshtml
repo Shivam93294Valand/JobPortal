@@ -195,7 +195,7 @@
     <form asp-action="AddEditCategory" method="post" class="form-card">
         @Html.AntiForgeryToken()
 
-        <!-- CRITICAL: Hidden field to track if this is an Add or Edit operation -->
+        <!-- Hidden field to track if this is an Add or Edit operation -->
         <input type="hidden" asp-for="CategoryId" />
 
         <div asp-validation-summary="ModelOnly" class="alert alert-danger p-2 text-center" role="alert"></div>
