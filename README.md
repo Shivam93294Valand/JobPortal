@@ -1,2 +1,2 @@
 # JobPortal
-## Company and Category Working with api and mvc with consume
+Drop down code in jobseeker controller, job posting page(job listing page)
